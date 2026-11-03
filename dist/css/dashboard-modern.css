@@ -1,0 +1,649 @@
+/* ============================================================
+   ACTIONFLOW Dashboard — shared modern stylesheet
+   Used by dist/pages/{role}/index.php for all role levels.
+   ============================================================ */
+
+body {
+  font-size: 13px;
+  background: #f3f5f9;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dashboard-wrapper {
+  padding: 18px 30px 24px;
+}
+
+.dashboard-title {
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 12px;
+  text-align: center;
+  color: #1e293b;
+  letter-spacing: .2px;
+}
+
+.dashboard-title > div {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
+  color: #6c757d;
+}
+
+/* ================= FILTER BAR ================= */
+.filter-box {
+  background: #fff;
+  padding: 10px 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  margin-bottom: 14px;
+  border: 1px solid #eef1f6;
+}
+
+.filter-box .form-label,
+.filter-box .fw-semibold {
+  color: #475569;
+  font-size: 12.5px;
+}
+
+.btn-export {
+  background: #198754;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background .15s, transform .15s;
+}
+
+.btn-export:hover {
+  background: #157347;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-report {
+  background: #6f42c1;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background .15s, transform .15s;
+}
+
+.btn-report:hover {
+  background: #5a32a3;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ================= CARDS ================= */
+.card {
+  border: none;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+
+.card-header {
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 15px;
+  text-align: center;
+  letter-spacing: 0.3px;
+  border-bottom: none;
+  border-radius: 14px 14px 0 0 !important;
+}
+
+.card-body {
+  padding: 14px;
+}
+
+/* ================= KPI CARDS ================= */
+.kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 18px;
+  height: 100%;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  border-left: 5px solid var(--kpi-accent, #2563eb);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.1);
+}
+
+.kpi-icon {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: var(--kpi-accent-soft, #dbeafe);
+  color: var(--kpi-accent, #2563eb);
+}
+
+.kpi-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: #6c757d;
+}
+
+.kpi-value {
+  font-size: 24px;
+  font-weight: 800;
+  margin-top: 2px;
+  color: #1e293b;
+}
+
+.kpi-primary { --kpi-accent: #2563eb; --kpi-accent-soft: #dbeafe; }
+.kpi-warning { --kpi-accent: #f59e0b; --kpi-accent-soft: #fef3c7; }
+.kpi-success { --kpi-accent: #10b981; --kpi-accent-soft: #d1fae5; }
+.kpi-danger  { --kpi-accent: #ef4444; --kpi-accent-soft: #fee2e2; }
+.kpi-info    { --kpi-accent: #7c3aed; --kpi-accent-soft: #ede9fe; }
+
+/* ================= SEVERITY / MANAGEMENT SECTIONS ================= */
+.plant-compare-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 18px;
+  height: 100%;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  border-top: 4px solid #2563eb;
+}
+
+.plant-compare-card .plant-compare-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #1e293b;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plant-compare-card .plant-compare-metric {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding: 5px 0;
+  border-bottom: 1px dashed #eef1f6;
+}
+
+.plant-compare-card .plant-compare-metric:last-child {
+  border-bottom: none;
+}
+
+.plant-compare-card .plant-compare-metric b {
+  color: #1e293b;
+}
+
+.ranking-bar-track {
+  background: #eef1f6;
+  border-radius: 6px;
+  height: 8px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ranking-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.chart-medium { height: 220px; }
+.chart-small { height: 180px; }
+.chart-large { height: 260px; }
+
+.table {
+  font-size: 12px;
+}
+
+.table thead {
+  background: #eef2ff;
+}
+
+.section {
+  margin-top: 12px;
+}
+
+canvas {
+  width: 100% !important;
+}
+
+/* ================= DELIVERY TABLE ================= */
+.delivery-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: #fff;
+}
+
+.delivery-table thead th {
+  background: #f9dcc8;
+  color: #000;
+  font-weight: 700;
+  text-align: center;
+  padding: 14px 10px;
+  border: 1px solid #bfd0e4;
+  vertical-align: middle;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.delivery-table tbody td {
+  border: 1px solid #d8e2ef;
+  padding: 12px 12px;
+  vertical-align: middle;
+  color: #1b3557;
+}
+
+.delivery-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.delivery-table tbody tr:hover {
+  background: #eef6ff;
+}
+
+.delivery-table td:nth-child(1) {
+  width: 60px;
+  text-align: center;
+}
+
+.delivery-table td:nth-child(2) {
+  text-align: left;
+  font-weight: 500;
+}
+
+.delivery-table td:nth-child(3),
+.delivery-table td:nth-child(4),
+.delivery-table td:nth-child(5),
+.delivery-table td:nth-child(6) {
+  text-align: right;
+}
+
+.delivery-table td:nth-child(7),
+.delivery-table td:nth-child(8),
+.delivery-table td:nth-child(9),
+.delivery-table td:nth-child(10) {
+  text-align: center;
+}
+
+/* Stock merah */
+.stock-danger {
+  background: #f8d7da;
+  color: #dc3545 !important;
+  font-weight: 700;
+}
+
+/* Sisa stock / Kemampuan Delivery */
+.sisa-stock {
+  font-weight: bold;
+}
+
+.delivery-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.table-responsive {
+  max-height: 550px;
+  overflow: auto;
+}
+
+/* ================= DASHBOARD TABS (Ringkasan / Delivery & Stock) ================= */
+.dash-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.dash-tab-btn {
+  background: none;
+  border: none;
+  padding: 10px 18px;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color .15s, border-color .15s;
+}
+
+.dash-tab-btn:hover { color: #2563eb; }
+.dash-tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
+.dash-tab-panel { display: none; }
+.dash-tab-panel.active { display: block; }
+
+/* ================= EXPANDABLE TABLE (cap rows, "Lihat semua") ================= */
+.table-extra-row { display: none; }
+
+.table-expand-toggle {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px 0;
+}
+
+.table-expand-toggle:hover { text-decoration: underline; }
+
+/* ================= CHART CARD TAB SWITCH (Jenis Masalah / Part / Mesin) ================= */
+.chart-tab-switch {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.chart-tab-switch button {
+  background: #eef2ff;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.chart-tab-switch button.active {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* ================= KPI BESAR + TREN (dashboard eksekutif) ================= */
+.kpi-big-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  height: 100%;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  border-left: 6px solid var(--kpi-accent, #2563eb);
+}
+
+.kpi-big-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: #6c757d;
+  margin-bottom: 4px;
+}
+
+.kpi-big-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.kpi-big-value .unit {
+  font-size: 18px;
+  font-weight: 700;
+  color: #6c757d;
+  margin-left: 2px;
+}
+
+.kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.kpi-trend.trend-good { background: #d1fae5; color: #047857; }
+.kpi-trend.trend-bad { background: #fee2e2; color: #b91c1c; }
+.kpi-trend.trend-flat { background: #f1f5f9; color: #64748b; }
+
+/* ================= DAFTAR ITEM KRITIS ================= */
+.critical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.critical-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+
+.critical-item:hover {
+  transform: translateX(2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, .15);
+  color: inherit;
+}
+
+.critical-item.severity-medium { background: #fffbeb; border-left-color: #f59e0b; }
+
+.critical-item-days {
+  flex-shrink: 0;
+  min-width: 64px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 18px;
+  color: #b91c1c;
+}
+
+.critical-item.severity-medium .critical-item-days { color: #b45309; }
+
+.critical-item-days small {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: inherit;
+  text-transform: uppercase;
+}
+
+.critical-item-body { flex: 1; min-width: 0; }
+
+.critical-item-title {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.critical-item-meta { font-size: 11.5px; color: #6c757d; margin-top: 2px; }
+
+.critical-item-badge {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid currentColor;
+}
+
+/* ================= PAGINASI LIST (ukuran halaman + Sebelumnya/Berikutnya) ================= */
+.list-pagination-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.list-pagination-select {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 12px;
+  color: #1e293b;
+  background: #fff;
+}
+
+.list-pagination-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.list-pagination-btn {
+  background: #eef2ff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.list-pagination-btn:hover:not(:disabled) { background: #dbeafe; }
+.list-pagination-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.list-pagination-info { font-size: 12px; color: #6c757d; font-weight: 600; }
+
+/* ================= RANKING DEPT/PIC MINI-LIST ================= */
+.rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rank-item { display: flex; align-items: center; gap: 12px; }
+
+.rank-item-name {
+  width: 130px;
+  flex-shrink: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-item-bar-track {
+  flex: 1;
+  background: #eef1f6;
+  border-radius: 6px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.rank-item-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.rank-item-percent {
+  width: 46px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #b91c1c;
+}
+
+/* ================= STOCK CASTING TABLE ================= */
+.casting-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: #fff;
+}
+
+.casting-table thead th {
+  background: #f9dcc8;
+  color: #000;
+  font-weight: 700;
+  text-align: center;
+  padding: 14px 10px;
+  border: 1px solid #bfd0e4;
+  vertical-align: middle;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.casting-table tbody td {
+  border: 1px solid #d8e2ef;
+  padding: 12px 12px;
+  vertical-align: middle;
+  color: #1b3557;
+  text-align: center;
+}
+
+.casting-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.casting-table tbody tr:hover {
+  background: #eef6ff;
+}
+
+.casting-table td:nth-child(1) {
+  width: 60px;
+}
+
+.casting-table td:nth-child(2) {
+  text-align: left;
+  font-weight: 500;
+}
+
+.casting-table td.stock-ppc-col {
+  background: #fff;
+}
+
+.casting-table td.stock-ppc-col.negative {
+  color: #ff0000;
+  font-weight: 700;
+}
+
+.casting-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}

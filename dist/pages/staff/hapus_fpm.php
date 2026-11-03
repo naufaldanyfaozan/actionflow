@@ -1,0 +1,26 @@
+<?php
+session_start();
+if (!isset($_SESSION["username"])) header("location:cek_login.php");
+
+if (($_SESSION['level'] ?? '') !== 'Staff' || ($_SESSION['dept'] ?? '') !== 'QA') {
+    die('Halaman ini hanya untuk Staff QA.');
+}
+
+include __DIR__ . '/../koneksi.php';
+require_once __DIR__ . '/../config/hapus_fpm_helper.php';
+
+$id = (int) ($_GET['id'] ?? 0);
+
+$allowedRedirect = ['list_fpm_internal.php', 'list_fpm_qa_semua.php', 'list_fpm_claim_machining.php', 'list_fpm_downtime.php'];
+$redirect = $_GET['back'] ?? 'list_fpm_internal.php';
+
+if (!in_array($redirect, $allowedRedirect, true)) {
+    $redirect = 'list_fpm_internal.php';
+}
+
+if ($id > 0) {
+    hapusFpmLengkap($koneksi, $id);
+}
+
+header("Location: $redirect");
+exit;

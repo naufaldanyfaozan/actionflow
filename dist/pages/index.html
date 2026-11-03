@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ACTIONFLOW</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <script>
+      // Halaman login harus dibuka dari folder dist/pages/, karena form-nya POST ke
+      // cek_login.php relatif. Kalau terbuka dari root (bookmark lama / cache browser),
+      // login berujung 404 - alihkan dulu ke alamat yang benar.
+      if (!/\/dist\/pages\/(index\.html)?$/.test(location.pathname)) {
+        location.replace("dist/pages/index.html" + location.search);
+      }
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      body {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background: linear-gradient(135deg, #eaf2fd 0%, #ffffff 55%, #e6f0fc 100%);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+
+      /* ===== Decorative industrial background ===== */
+      .bg-decor {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .bg-decor .shape-tl {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 60%;
+        height: 60%;
+        background: linear-gradient(135deg, #1d4ed8 0%, #5b9cf6 100%);
+        clip-path: polygon(0 0, 42% 0, 0 60%);
+        opacity: 0.9;
+      }
+
+      .bg-decor .dots {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 40%;
+        height: 40%;
+        clip-path: polygon(0 0, 30% 0, 0 42%);
+        background-image: radial-gradient(
+          rgba(255, 255, 255, 0.55) 1.5px,
+          transparent 1.5px
+        );
+        background-size: 18px 18px;
+        opacity: 0.8;
+      }
+
+      .bg-decor .shape-br {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 65%;
+        height: 55%;
+        background: linear-gradient(315deg, #1d4ed8 0%, #4f8cf2 100%);
+        clip-path: polygon(100% 100%, 100% 42%, 58% 100%);
+        opacity: 0.9;
+      }
+
+      .bg-decor .shape-br-accent {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 65%;
+        height: 55%;
+        background: rgba(255, 255, 255, 0.25);
+        clip-path: polygon(100% 100%, 100% 48%, 63% 100%);
+      }
+
+      .bg-decor svg.motifs {
+        position: absolute;
+        top: 4%;
+        right: 3%;
+        width: min(30vw, 420px);
+        height: auto;
+        opacity: 0.55;
+      }
+
+      .bg-decor svg.motifs-bottom {
+        position: absolute;
+        bottom: 6%;
+        left: 4%;
+        width: min(14vw, 180px);
+        height: auto;
+        opacity: 0.4;
+      }
+
+      /* ===== Login card ===== */
+      .login-card {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: 420px;
+        max-width: 90vw;
+        padding: 40px 36px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.82);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow:
+          0 20px 60px rgba(20, 60, 140, 0.18),
+          0 2px 8px rgba(20, 60, 140, 0.08);
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .brand-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1d4ed8, #4f8cf2);
+        box-shadow: 0 10px 24px rgba(29, 78, 216, 0.35);
+      }
+
+      .brand-icon svg {
+        width: 28px;
+        height: 28px;
+        fill: #ffffff;
+      }
+
+      .brand-icon.is-logo {
+        width: auto;
+        min-width: 56px;
+        max-width: 200px;
+        padding: 6px;
+        background: #ffffff;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+      }
+
+      .brand-icon img {
+        max-height: 44px;
+        max-width: 188px;
+        object-fit: contain;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 21px;
+        font-weight: 700;
+        color: #14213d;
+        letter-spacing: 0.5px;
+      }
+
+      .brand p {
+        margin: 0;
+        font-size: 13px;
+        color: #64748b;
+        text-align: center;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .login-error {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .login-error.show {
+        display: flex;
+      }
+
+      .field label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #33415c;
+      }
+
+      .input-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 48px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1.5px solid #e2e8f0;
+        background: #ffffff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .input-group:focus-within {
+        border-color: #4f8cf2;
+        box-shadow: 0 0 0 4px rgba(79, 140, 242, 0.15);
+      }
+
+      .input-group svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        fill: #94a3b8;
+      }
+
+      .input-group input {
+        flex: 1;
+        height: 100%;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        color: #1e293b;
+        background: transparent;
+        font-family: inherit;
+      }
+
+      .input-group input::placeholder {
+        color: #a3b0c2;
+      }
+
+      .toggle-password {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: 6px;
+      }
+
+      .toggle-password:hover svg,
+      .toggle-password:focus-visible svg {
+        fill: #4f8cf2;
+      }
+
+      .toggle-password .icon-eye-off {
+        display: none;
+      }
+
+      .toggle-password.is-visible .icon-eye {
+        display: none;
+      }
+
+      .toggle-password.is-visible .icon-eye-off {
+        display: block;
+      }
+
+      .row-between {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2px;
+      }
+
+      .remember {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #33415c;
+      }
+
+      .remember input {
+        width: 16px;
+        height: 16px;
+        accent-color: #1d4ed8;
+        cursor: pointer;
+      }
+
+      .btn-submit {
+        margin-top: 12px;
+        height: 48px;
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        cursor: pointer;
+        background: linear-gradient(135deg, #1d4ed8, #4f8cf2);
+        box-shadow: 0 10px 24px rgba(29, 78, 216, 0.3);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .btn-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 30px rgba(29, 78, 216, 0.38);
+      }
+
+      .btn-submit:active {
+        transform: translateY(0);
+      }
+
+      .footnote {
+        margin: 4px 0 0;
+        text-align: center;
+        font-size: 12px;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="bg-decor" aria-hidden="true">
+      <div class="shape-tl"></div>
+      <div class="dots"></div>
+      <div class="shape-br"></div>
+      <div class="shape-br-accent"></div>
+
+      <svg class="motifs" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#1d4ed8" stroke-width="1.5">
+          <polygon points="150,10 168,20 168,40 150,50 132,40 132,20" />
+          <polygon points="178,45 192,53 192,69 178,77 164,69 164,53" />
+          <polygon points="120,60 138,70 138,90 120,100 102,90 102,70" fill="#c9dcf7" stroke="none" />
+          <polygon points="150,85 168,95 168,115 150,125 132,115 132,95" />
+          <polygon points="100,30 112,37 112,51 100,58 88,51 88,37" fill="#dbe7fb" stroke="none" />
+        </g>
+        <g fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round">
+          <path d="M20 20 l6 -6 M14 26 l12 -12" />
+          <circle cx="17" cy="17" r="9" />
+          <path d="M46 8 l4 -4 M42 12 l8 -8" />
+          <circle cx="44" cy="10" r="6" />
+        </g>
+      </svg>
+
+      <svg class="motifs-bottom" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.6">
+          <polygon points="30,5 45,13 45,29 30,37 15,29 15,13" />
+          <polygon points="60,25 72,32 72,46 60,53 48,46 48,32" />
+        </g>
+      </svg>
+    </div>
+
+    <form class="login-card" action="cek_login.php" method="POST">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 2 2 7l10 5 10-5-10-5Zm0 8L2 15l10 5 10-5-10-5Z"
+            />
+          </svg>
+        </div>
+        <h1 id="brandNama">ACTIONFLOW</h1>
+        <p id="brandTagline">Corrective Action, Monitoring &amp; Improvement System</p>
+      </div>
+
+      <div id="loginError" class="login-error">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm0 6 1.2 8h-2.4L12 8Zm0 10.5a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6Z"/></svg>
+        <span>Username atau password salah</span>
+      </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <div class="input-group">
+          <svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-9 2.2-9 5v3h18v-3c0-2.8-4.6-5-9-5Z"/></svg>
+          <input id="username" placeholder="Enter your username" type="text" name="username" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-group">
+          <svg viewBox="0 0 24 24"><path d="M6 10V8a6 6 0 1 1 12 0v2h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1h1Zm2 0h8V8a4 4 0 1 0-8 0v2Z"/></svg>
+          <input id="password" placeholder="Enter your password" type="password" name="password" required />
+          <button type="button" class="toggle-password" id="togglePassword" aria-label="Tampilkan password" title="Tampilkan password">
+            <svg class="icon-eye" viewBox="0 0 24 24"><path d="M12 5C6.5 5 2.1 8.4 1 12c1.1 3.6 5.5 7 11 7s9.9-3.4 11-7c-1.1-3.6-5.5-7-11-7Zm0 11.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Zm0-2.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+            <svg class="icon-eye-off" viewBox="0 0 24 24"><path d="M2.3 3.7 3.7 2.3l18 18-1.4 1.4-3.4-3.4A11.7 11.7 0 0 1 12 19c-5.5 0-9.9-3.4-11-7a12 12 0 0 1 4.1-5.5L2.3 3.7Zm7.4 7.4a2.5 2.5 0 0 0 3.2 3.2l-3.2-3.2ZM12 5c5.5 0 9.9 3.4 11 7a12.3 12.3 0 0 1-3.2 4.8l-3.4-3.4A4.5 4.5 0 0 0 10.6 7.6L8.4 5.4C9.5 5.1 10.7 5 12 5Z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="row-between">
+        <label class="remember">
+          <input type="checkbox" name="remember" />
+          Remember me
+        </label>
+      </div>
+
+      <button class="btn-submit" type="submit">Sign In</button>
+      <p class="footnote">&copy; <span id="brandTahun">2026</span> <span id="brandFooter">ACTIONFLOW</span>. All rights reserved.</p>
+    </form>
+
+    <script>
+      (function () {
+        var btn = document.getElementById("togglePassword");
+        var input = document.getElementById("password");
+        btn.addEventListener("click", function () {
+          var tampil = input.type === "password";
+          input.type = tampil ? "text" : "password";
+          btn.classList.toggle("is-visible", tampil);
+          var label = tampil ? "Sembunyikan password" : "Tampilkan password";
+          btn.setAttribute("aria-label", label);
+          btn.setAttribute("title", label);
+          input.focus();
+        });
+      })();
+
+      // Nama & logo diatur Admin IT (Identitas Aplikasi) - teks bawaan di atas tetap tampil
+      // kalau branding.php gagal dimuat.
+      document.getElementById("brandTahun").textContent = new Date().getFullYear();
+      fetch("branding.php", { cache: "no-store" })
+        .then(function (res) { return res.json(); })
+        .then(function (b) {
+          document.title = b.nama;
+          document.getElementById("brandNama").textContent = b.nama;
+          document.getElementById("brandFooter").textContent = b.nama;
+          document.getElementById("brandTagline").textContent = b.tagline;
+          if (b.logo) {
+            var icon = document.querySelector(".brand-icon");
+            var img = document.createElement("img");
+            img.src = b.logo;
+            img.alt = b.nama;
+            icon.replaceChildren(img);
+            icon.classList.add("is-logo");
+          }
+        })
+        .catch(function () {});
+
+      if (new URLSearchParams(location.search).get("login_error") === "1") {
+        document.getElementById("loginError").classList.add("show");
+        history.replaceState(null, "", location.pathname);
+      }
+    </script>
+  </body>
+</html>

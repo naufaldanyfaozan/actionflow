@@ -1,0 +1,76 @@
+# build output (dist/pages is the hand-written FPM app, not generated - keep it tracked)
+dist/*
+!dist/pages/
+!dist/js/
+!dist/css/
+
+# dist/js and dist/css are otherwise vendor libs (AdminLTE/Bootstrap/etc) - only these
+# hand-written dashboard assets (shared by dist/pages/{role}/index.php) are tracked
+dist/js/*
+!dist/js/dashboard-widgets.js
+!dist/js/print-export.js
+dist/css/*
+!dist/css/dashboard-modern.css
+
+# generated types
+.astro/
+
+# unwanted types
+**/env.d.ts
+
+# System / Log files
+*.DS_Store
+*.log
+
+# Archives
+*.zip
+
+# Sass Cache
+.sass-cache
+
+# Project files
+.idea
+nbproject
+nbproject/private
+.vscode/
+.vs/
+
+# Node / Bower
+node_modules/
+bower_components/
+
+# PHP dependencies (installable via `composer install`)
+vendor/
+
+# User-uploaded files
+dist/pages/uploads/
+
+# Docs
+/docs/_site/
+/docs/vendor/
+/docs/.bundle/
+/docs_html/
+.jekyll-cache/
+.jekyll-metadata
+
+# ETC
+TODO
+test.html
+ad.js
+/.cache/
+
+# File rahasia FPM - tiap instalasi punya sendiri, dibuat dari *.example.php di folder yang sama.
+# db_config.php = password database, env.php = token Fonnte, wa_nomor.php = nomor WA karyawan.
+dist/pages/config/db_config.php
+dist/pages/config/env.php
+dist/pages/config/wa_nomor.php
+
+# Foto upload FPM dari user (data produksi) - folder tetap ada lewat .gitkeep.
+dist/pages/upload_fpm/*
+!dist/pages/upload_fpm/.gitkeep
+
+# Logo hasil upload Admin IT > Identitas Aplikasi (beda per instalasi).
+src/assets/img/branding/
+
+# File kunci sementara Office (muncul saat file .pptx/.docx sedang dibuka).
+~$*
