@@ -45,6 +45,8 @@ const APP_SETTING_DEFINISI = [
     'monitor_cm_ph_sp'           => ['grup' => 'monitor', 'tipe' => 'int', 'default' => 4, 'min' => 1, 'max' => 30, 'satuan' => 'hari kerja', 'label' => 'Claim Machining: approve (Plant Head) - kena SP'],
     'monitor_cm_dir_warning'     => ['grup' => 'monitor', 'tipe' => 'int', 'default' => 3, 'min' => 1, 'max' => 30, 'satuan' => 'hari kerja', 'label' => 'Claim Machining: approve (Directure) - mulai "Mendekati SP"', 'pasangan' => 'monitor_cm_dir_sp'],
     'monitor_cm_dir_sp'          => ['grup' => 'monitor', 'tipe' => 'int', 'default' => 4, 'min' => 1, 'max' => 30, 'satuan' => 'hari kerja', 'label' => 'Claim Machining: approve (Directure) - kena SP'],
+    'monitor_asakai_fpm_warning' => ['grup' => 'monitor', 'tipe' => 'int', 'default' => 1, 'min' => 1, 'max' => 30, 'satuan' => 'hari kerja', 'label' => 'Buat FPM dari pembahasan Asakai (Staff IMP) - mulai "Mendekati SP"', 'pasangan' => 'monitor_asakai_fpm_sp', 'info' => 'Dihitung dari hari problem Asakai ditandai perlu FPM.'],
+    'monitor_asakai_fpm_sp'      => ['grup' => 'monitor', 'tipe' => 'int', 'default' => 2, 'min' => 1, 'max' => 30, 'satuan' => 'hari kerja', 'label' => 'Buat FPM dari pembahasan Asakai (Staff IMP) - kena SP'],
     'sp_masa_berlaku_bulan'      => ['grup' => 'monitor', 'tipe' => 'int', 'default' => 6, 'min' => 1, 'max' => 24, 'satuan' => 'bulan', 'label' => 'Masa berlaku SP', 'info' => 'Terlambat lagi selama SP masih berlaku -> naik level.'],
     'sp_level_maks'              => ['grup' => 'monitor', 'tipe' => 'int', 'default' => 3, 'min' => 1, 'max' => 5, 'satuan' => 'level', 'label' => 'Level SP tertinggi', 'info' => 'Mis. 3 = SP 1 -> SP 2 -> SP 3.'],
 

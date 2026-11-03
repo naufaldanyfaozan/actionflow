@@ -302,3 +302,41 @@ foreach ($tables as $tableName => $meta) {
         }
     }
 }
+
+/*
+================================
+FPM DARI PEMBAHASAN ASAKAI BELUM DIBUAT
+================================
+Staff IMP plant terkait diingatkan setiap hari kerja mulai H+warning sampai FPM-nya dibuat;
+kalau sudah SP, Head IMP plant itu ikut dikirimi. Log per tugas (asakai_fpm_tugas.id),
+jenis 'asakai_fpm_belum'. Lihat config/asakai_fpm_helper.php.
+*/
+require_once __DIR__ . '/asakai_fpm_helper.php';
+
+foreach (ambilTugasAsakaiFpmTertunda($koneksi) as $t) {
+    $jenisLog = 'asakai_fpm_belum';
+    if (!in_array($t['status'], ['warning', 'sp'], true) || sudahKirimHariIni($koneksi, $t['id'], $jenisLog)) {
+        continue;
+    }
+
+    $waStaffTugas = $t['plant'] === '3' ? $waStaffIMP3 : ($t['plant'] === '1' ? $waStaffIMP1 : []);
+    $waHeadTugas  = $t['plant'] === '3' ? $waIMPHead3 : ($t['plant'] === '1' ? $waIMPHead1 : []);
+
+    $msg = "*Reminder FPM dari Asakai*\n\n"
+        . "Mesin : {$t['machine']}\n"
+        . "Part : {$t['namapart']}\n"
+        . "Asakai : " . date('d-m-Y', strtotime($t['tanggal'])) . "\n"
+        . "FPM : " . ASAKAI_FPM_JENIS[$t['jenis']]['label'] . "\n\n"
+        . ($t['status'] === 'sp'
+            ? "FPM belum dibuat dan sudah melewati batas - tercatat *SP* untuk Staff IMP sejak " . date('d-m-Y', strtotime($t['tgl_sp'])) . ".\n"
+            : "FPM belum dibuat. Batas akhir " . date('d-m-Y', strtotime($t['batas_akhir'])) . ", setelah itu tercatat *SP* untuk Staff IMP.\n")
+        . "Mohon segera dibuat dari menu pembahasan Asakai.";
+
+    $kirim = sendWA($waStaffTugas, $msg);
+    if ($t['status'] === 'sp') {
+        $kirim = sendWA($waHeadTugas, $msg) || $kirim;
+    }
+    if ($kirim) {
+        simpanLogWA($koneksi, $t['id'], $jenisLog);
+    }
+}

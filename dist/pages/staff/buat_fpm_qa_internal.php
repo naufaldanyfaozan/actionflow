@@ -532,6 +532,7 @@ $noFormAuto = "FPM-I/$urutFormat/$bulanRomawi/$tahun";
         });
     </script>
 
+    <?php require_once __DIR__ . '/../config/jenis_masalah_helper.php'; pilihJenisMasalahAset(); ?>
 </body>
 
 </html>

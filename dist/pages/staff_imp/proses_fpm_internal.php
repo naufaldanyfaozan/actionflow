@@ -6,6 +6,8 @@ if (!isset($_SESSION["username"])) {
 }
 
 include __DIR__ . '/../koneksi.php';
+require_once __DIR__ . '/../config/jenis_masalah_helper.php';
+require_once __DIR__ . '/../config/asakai_fpm_helper.php';
 
 mysqli_begin_transaction($koneksi);
 
@@ -30,6 +32,14 @@ try {
     $dept                 = $_POST['dept'] ?? '';
     $jenis_masalah        = $_POST['jenis_masalah'] ?? '';
     $jenis_masalah_detail = $_POST['jenis_masalah_detail'] ?? '';
+
+    // FPM dari Asakai: problem Asakai yang belum ada di master Jenis Masalah ditambahkan dulu.
+    daftarkanJenisMasalahDariAsakai($koneksi, (int) ($_POST['id_asakai'] ?? 0), 'NG', $jenis_masalah);
+
+    // Jenis Masalah hanya boleh dari master (lihat config/jenis_masalah_helper.php).
+    if (!jenisMasalahTerdaftar($koneksi, $jenis_masalah)) {
+        throw new Exception(pesanJenisMasalahTidakTerdaftar($jenis_masalah));
+    }
 
     // $shift           = $_POST['shift'] ?? '';
     // $total_lost_time = $_POST['total_lost_time'] ?? '';
@@ -216,6 +226,10 @@ try {
     }
 
     mysqli_commit($koneksi);
+
+    // FPM dari pembahasan Asakai -> tugasnya selesai (lihat config/asakai_fpm_helper.php).
+    // Setelah commit: pembuatan tabel otomatis (DDL) memicu commit implisit di MySQL.
+    tautkanFpmKeAsakai($koneksi, (int) $id_fpm, $no_form, 'NG', (int) ($_POST['id_asakai'] ?? 0), $plant, $machine_no, $nama_part);
 
     header("Location: form_fpm_internal.php?id=" . $id_fpm);
     exit;

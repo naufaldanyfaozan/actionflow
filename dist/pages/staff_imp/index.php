@@ -586,6 +586,12 @@ $query_delivery = mysqli_query($koneksi, "SELECT
           </div>
         </div>
 
+        <?php
+        // FPM dari pembahasan Asakai yang belum dibuat (plant user; tanpa plant = semua).
+        require_once __DIR__ . '/../config/asakai_fpm_helper.php';
+        renderPengingatAsakaiFpm($koneksi, (string) ($_SESSION['plant'] ?? ''));
+        ?>
+
         <div class="filter-box">
           <form method="GET" class="row g-2 align-items-center">
             <div class="col-auto fw-semibold">Periode:</div>

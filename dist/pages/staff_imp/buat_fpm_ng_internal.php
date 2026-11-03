@@ -4,6 +4,10 @@ if (!isset($_SESSION["username"])) header("location:cek_login.php");
 
 include __DIR__ . '/../koneksi.php';
 
+// Dibuka dari pembahasan Asakai (tombol "Buat sekarang") - header diisi dari Asakai.
+require_once __DIR__ . '/../config/asakai_fpm_helper.php';
+$pfAsakai = asakaiFpmPrefill($koneksi, (int) ($_GET['asakai'] ?? 0), 'NG');
+
 $queryNamaPart = mysqli_query(
     $koneksi,
     "SELECT namapart, type, partnumber FROM master_part ORDER BY namapart ASC"
@@ -225,6 +229,8 @@ $noFormAuto = "FPM-N/$urutFormat/$bulanRomawi/$tahun";
                             <h2>Create Blank FPM</h2>
                         </div>
 
+                        <?php renderBannerAsakaiFpm($pfAsakai); ?>
+
                         <div class="form-grid">
 
                             <div class="form-group">
@@ -255,7 +261,7 @@ $noFormAuto = "FPM-N/$urutFormat/$bulanRomawi/$tahun";
                                         <option
                                             value="<?= htmlspecialchars($row['namapart']); ?>"
                                             data-type="<?= htmlspecialchars($row['type']); ?>"
-                                            data-partnumber="<?= htmlspecialchars($row['partnumber']); ?>">
+                                            data-partnumber="<?= htmlspecialchars($row['partnumber']); ?>"<?= ($pfAsakai && $row['namapart'] === $pfAsakai['namapart'] && $row['type'] === $pfAsakai['type']) ? ' selected' : '' ?>>
                                             <?= htmlspecialchars($row['namapart'] . ' - ' . $row['type']); ?>
                                         </option>
                                     <?php } ?>
@@ -265,12 +271,12 @@ $noFormAuto = "FPM-N/$urutFormat/$bulanRomawi/$tahun";
 
                             <div class="form-group">
                                 <label>No Part</label>
-                                <input type="text" class="readonly" name="no_part" id="no_part" readonly placeholder="Auto">
+                                <input type="text" class="readonly" name="no_part" id="no_part" readonly placeholder="Auto" value="<?= htmlspecialchars($pfAsakai['partnumber'] ?? '') ?>">
                             </div>
 
                             <div class="form-group">
                                 <label>Model / Type</label>
-                                <input type="text" class="readonly" name="model" id="model_type" readonly placeholder="Auto">
+                                <input type="text" class="readonly" name="model" id="model_type" readonly placeholder="Auto" value="<?= htmlspecialchars($pfAsakai['type'] ?? '') ?>">
                             </div>
 
                             <div class="form-group">
@@ -279,7 +285,7 @@ $noFormAuto = "FPM-N/$urutFormat/$bulanRomawi/$tahun";
                                     <option value="">-- Pilih --</option>
 
                                     <?php while ($m = mysqli_fetch_assoc($queryMachine)) { ?>
-                                        <option value="<?= htmlspecialchars($m['nama_mesin']); ?>">
+                                        <option value="<?= htmlspecialchars($m['nama_mesin']); ?>"<?= ($pfAsakai && $m['nama_mesin'] === $pfAsakai['machine']) ? ' selected' : '' ?>>
                                             <?= htmlspecialchars($m['nama_mesin']); ?>
                                         </option>
                                     <?php } ?>
@@ -289,16 +295,17 @@ $noFormAuto = "FPM-N/$urutFormat/$bulanRomawi/$tahun";
 
                             <div class="form-group">
                                 <label>Mold #</label>
-                                <input type="text" name="mold_no">
+                                <input type="text" name="mold_no" value="<?= htmlspecialchars($pfAsakai['mold_no'] ?? '') ?>">
                             </div>
 
                             <div class="form-group">
                                 <label>Jenis Masalah <span style="color:#dc2626">*</span></label>
                                 <select name="jenis_masalah" class="form-control" required>
                                     <option value="">-- Pilih --</option>
+                                    <?php renderOpsiJenisMasalahAsakai($pfAsakai); ?>
 
                                     <?php while ($jm = mysqli_fetch_assoc($queryJenisMasalah)) { ?>
-                                        <option value="<?= htmlspecialchars($jm['masalah']); ?>">
+                                        <option value="<?= htmlspecialchars($jm['masalah']); ?>"<?= asakaiFpmMasalahTerpilih($pfAsakai, $jm['masalah']) ?>>
                                             <?= htmlspecialchars($jm['masalah']); ?>
                                         </option>
                                     <?php } ?>
@@ -308,7 +315,7 @@ $noFormAuto = "FPM-N/$urutFormat/$bulanRomawi/$tahun";
 
                             <div class="form-group">
                                 <label>Detail Jenis Masalah</label>
-                                <input type="text" name="jenis_masalah_detail" class="form-control">
+                                <input type="text" name="jenis_masalah_detail" class="form-control" value="<?= htmlspecialchars($pfAsakai['detail'] ?? '') ?>">
                             </div>
 
                             <div class="form-group">
@@ -660,6 +667,7 @@ $noFormAuto = "FPM-N/$urutFormat/$bulanRomawi/$tahun";
         });
     </script>
 
+    <?php require_once __DIR__ . '/../config/jenis_masalah_helper.php'; pilihJenisMasalahAset(); ?>
 </body>
 
 </html>

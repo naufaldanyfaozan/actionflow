@@ -373,6 +373,10 @@ function ambilMonitoringApproval(mysqli $koneksi, ?string $hariIni = null): arra
 function hitungSpMonitoringApproval(mysqli $koneksi): int
 {
     $data = ambilMonitoringApproval($koneksi);
+    // SP Staff IMP yang lupa membuat FPM dari pembahasan Asakai - dicatat lebih dulu supaya
+    // ikut terkirim di email SP ke HRD (prosesEmailSpHrd di catatPelanggaranSpFpm).
+    require_once __DIR__ . '/asakai_fpm_helper.php';
+    catatSpAsakaiFpm($koneksi);
     catatPelanggaranSpFpm($koneksi, $data);
     return count(array_filter($data, fn($row) => $row['status'] === 'sp'));
 }
@@ -480,10 +484,12 @@ function ambilRiwayatSpFpm(mysqli $koneksi, ?string $hariIni = null): array
 
     // pihak => tanggal pelanggaran => daftar FPM
     $perPihak = [];
-    $q = $koneksi->query("SELECT id, pihak, id_fpm, no_form, tahap_label, tgl_sp FROM fpm_sp_pelanggaran ORDER BY tgl_sp, id");
+    $q = $koneksi->query("SELECT id, pihak, id_fpm, no_form, tahap, tahap_label, tgl_sp FROM fpm_sp_pelanggaran ORDER BY tgl_sp, id");
     while ($q && ($r = $q->fetch_assoc())) {
         $tgl = max($r['tgl_sp'], $mulaiBerlaku);
-        $perPihak[$r['pihak']][$tgl][] = ['id' => (int) $r['id'], 'id_fpm' => (int) $r['id_fpm'], 'no_form' => $r['no_form'], 'tahap' => $r['tahap_label']];
+        $perPihak[$r['pihak']][$tgl][] = ['id' => (int) $r['id'], 'id_fpm' => (int) $r['id_fpm'], 'no_form' => $r['no_form'], 'tahap' => $r['tahap_label'],
+            // SP lupa buat FPM dari Asakai: id_fpm berisi id_asakai (lihat asakai_fpm_helper.php).
+            'asakai' => strpos($r['tahap'], 'asakai_fpm') === 0];
     }
 
     $riwayat = [];

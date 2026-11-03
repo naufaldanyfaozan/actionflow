@@ -492,6 +492,84 @@ function renderCmTable(string $prefix, int $group, array $rows, array $masterDep
 
                 <h4 style="margin-left: 20px;">Pembahasan Problem ASAKAI</h4><br>
 
+                <?php
+                // Problem yang perlu dibuatkan FPM - lihat config/asakai_fpm_helper.php.
+                // Di luar <form> utama karena tiap tombol punya form sendiri.
+                require_once __DIR__ . '/../config/asakai_fpm_helper.php';
+                $tugasFpm = ambilTugasAsakaiFpm($koneksi, $id);
+                $adaProblem = [
+                    'DOWN_TIME' => hasSavedProblem($analisaDT),
+                    'NG'        => hasSavedProblem($analisaNG),
+                ];
+                if (!in_array(true, $adaProblem, true)) {
+                    $adaProblem = ['DOWN_TIME' => true, 'NG' => true];
+                }
+                $flashFpm = $_SESSION['flash_asakai_fpm'] ?? null;
+                unset($_SESSION['flash_asakai_fpm']);
+                ?>
+                <div class="card-clean" id="fpm-asakai">
+                    <div class="section-title">PERLU DIBUATKAN FPM?</div>
+                    <?php if ($flashFpm): ?>
+                        <div class="alert alert-<?= $flashFpm['tipe'] ?> py-2"><?= htmlspecialchars($flashFpm['pesan']) ?></div>
+                    <?php endif; ?>
+                    <div style="font-size:12.5px; color:#6b7280; margin-bottom:12px;">
+                        Kalau problem Asakai ini perlu FPM, pilih <b>Buat sekarang</b> (form FPM terbuka dengan header dari Asakai ini)
+                        atau <b>Buat nanti</b>. Yang belum dibuat muncul sebagai peringatan di Dashboard; lewat
+                        <?= appSettingInt('monitor_asakai_fpm_sp') - 1 ?> hari kerja tercatat <b>SP</b> untuk Staff IMP.
+                        Tidak perlu FPM? Abaikan saja.
+                    </div>
+                    <table class="table-clean">
+                        <tbody>
+                            <?php foreach (ASAKAI_FPM_JENIS as $kodeJenis => $infoJenis):
+                                if (empty($adaProblem[$kodeJenis]) && !isset($tugasFpm[$kodeJenis])) continue;
+                                $t = $tugasFpm[$kodeJenis] ?? null;
+                                $status = $t['status'] ?? null;
+                            ?>
+                                <tr>
+                                    <td style="width:170px; font-weight:600;">FPM <?= htmlspecialchars($infoJenis['label']) ?></td>
+                                    <td>
+                                        <?php if ($status === 'selesai'): ?>
+                                            <span class="badge bg-success">Sudah dibuat</span>
+                                            <a href="<?= $kodeJenis === 'NG' ? 'form_fpm_internal.php' : 'form_fpm.php' ?>?id=<?= (int) $t['id_fpm'] ?>" class="fw-semibold ms-1"><?= htmlspecialchars($t['no_form']) ?></a>
+                                            <span style="color:#6b7280; font-size:12px;">(<?= date('d-m-Y H:i', strtotime($t['selesai_at'])) ?>)</span>
+                                        <?php elseif ($status !== null && $status !== 'batal'): ?>
+                                            <?php if ($status === 'sp'): ?>
+                                                <span class="badge bg-danger">SP</span> Terlambat - tercatat SP sejak <?= monitoringFormatTgl($t['tgl_sp']) ?>.
+                                            <?php elseif ($status === 'warning'): ?>
+                                                <span class="badge bg-warning text-dark">H+<?= $t['hari'] ?></span> Belum dibuat - batas akhir <b><?= monitoringFormatTgl($t['batas_akhir']) ?></b>, setelah itu SP.
+                                            <?php else: ?>
+                                                <span class="badge bg-info text-dark">Perlu dibuat</span> Batas akhir <b><?= monitoringFormatTgl($t['batas_akhir']) ?></b>.
+                                            <?php endif; ?>
+                                            <a href="<?= $infoJenis['form'] ?>?asakai=<?= $id ?>" class="btn btn-primary btn-sm ms-2"><i class="bi bi-file-earmark-plus"></i> Buat FPM sekarang</a>
+                                            <?php if ($t['mulai'] === date('Y-m-d')): ?>
+                                                <form method="POST" action="aksi_asakai_fpm.php" class="d-inline-flex gap-1 align-items-center ms-2"
+                                                    onsubmit="return confirm('Batalkan tugas FPM <?= htmlspecialchars($infoJenis['label']) ?> untuk Asakai ini?')">
+                                                    <input type="hidden" name="id_asakai" value="<?= $id ?>">
+                                                    <input type="hidden" name="jenis" value="<?= $kodeJenis ?>">
+                                                    <input type="hidden" name="aksi" value="batal">
+                                                    <input type="text" name="alasan" placeholder="Alasan batal (salah tandai)" required style="width:210px">
+                                                    <button type="submit" class="btn btn-outline-secondary btn-sm" style="white-space:nowrap">Batalkan</button>
+                                                </form>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            <form method="POST" action="aksi_asakai_fpm.php" class="d-inline">
+                                                <input type="hidden" name="id_asakai" value="<?= $id ?>">
+                                                <input type="hidden" name="jenis" value="<?= $kodeJenis ?>">
+                                                <button type="submit" name="aksi" value="langsung" class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-plus"></i> Buat sekarang</button>
+                                                <button type="submit" name="aksi" value="nanti" class="btn btn-outline-warning btn-sm ms-1"
+                                                    onclick="return confirm('Tandai FPM <?= htmlspecialchars($infoJenis['label']) ?> perlu dibuat nanti? Kalau belum dibuat sampai batasnya, Staff IMP kena SP.')"><i class="bi bi-alarm"></i> Buat nanti</button>
+                                            </form>
+                                            <?php if ($status === 'batal'): ?>
+                                                <span style="color:#6b7280; font-size:12px;" class="ms-2">Pernah dibatalkan: <?= htmlspecialchars($t['alasan_batal'] ?? '') ?></span>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
                 <form method="POST" action="proses_asakai_simpan.php" enctype="multipart/form-data">
 
                     <div class="card-clean">

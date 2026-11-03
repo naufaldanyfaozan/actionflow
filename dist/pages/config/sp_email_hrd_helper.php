@@ -75,7 +75,7 @@ function emailSpHrdAkunPihak(mysqli $koneksi, string $pihak): array
 {
     $level = null;
     $filter = '';
-    foreach (['Dept Head QA', 'Dept Head', 'Plant Head', 'Head IMP', 'Directure'] as $lvl) {
+    foreach (['Dept Head QA', 'Dept Head', 'Plant Head', 'Head IMP', 'Staff IMP', 'Directure'] as $lvl) {
         if (stripos($pihak, $lvl) === 0) {
             $level = $lvl;
             $filter = trim(substr($pihak, strlen($lvl)));
@@ -89,7 +89,7 @@ function emailSpHrdAkunPihak(mysqli $koneksi, string $pihak): array
     if ($level === 'Dept Head' && $filter !== '') {
         $stmt = $koneksi->prepare("SELECT username FROM user WHERE level = ? AND dept = ? ORDER BY username");
         $stmt->bind_param('ss', $level, $filter);
-    } elseif ($level === 'Head IMP' && $filter !== '') {
+    } elseif (in_array($level, ['Head IMP', 'Staff IMP'], true) && $filter !== '') {
         $stmt = $koneksi->prepare("SELECT username FROM user WHERE level = ? AND REPLACE(plant, ' ', '') = REPLACE(?, ' ', '') ORDER BY username");
         $stmt->bind_param('ss', $level, $filter);
     } else {
@@ -127,7 +127,7 @@ function emailSpHrdIsi(mysqli $koneksi, array $sp): string
     return '<div style="font-family:Arial,sans-serif;font-size:14px;color:#1e293b">'
         . '<p>Yth. HRD,</p>'
         . '<p>Sistem ' . $e(brandNama()) . ' mencatat <b>SP ' . $e($sp['level']) . '</b> untuk pihak di bawah ini karena tahap approval FPM '
-        . 'melewati batas waktu (hari kerja) sesuai aturan Monitor Approval. Mohon ditindaklanjuti sesuai kebijakan perusahaan.</p>'
+        . '(atau pembuatan FPM dari pembahasan Asakai) melewati batas waktu (hari kerja) sesuai aturan Monitor Approval. Mohon ditindaklanjuti sesuai kebijakan perusahaan.</p>'
         . '<table style="border-collapse:collapse;margin:8px 0 16px">' . $tabelInfo . '</table>'
         . '<p style="margin-bottom:6px"><b>FPM yang terlambat:</b></p>'
         . '<table style="border-collapse:collapse"><tr>'

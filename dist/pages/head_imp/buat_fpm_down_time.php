@@ -288,18 +288,16 @@ $noFormAuto = "FPM-D/$urutFormat/$bulanRomawi/$tahun";
 
                             <div class="form-group">
                                 <label>Jenis Masalah <span style="color:#dc2626">*</span></label>
-                                <input
-                                    type="text"
-                                    name="jenis_masalah"
-                                    list="list_jenis_masalah"
-                                    placeholder="Ketik atau pilih"
-                                    required>
+                                <select name="jenis_masalah" class="form-control" required>
+                                    <option value="">-- Pilih --</option>
 
-                                <datalist id="list_jenis_masalah">
                                     <?php while ($jm = mysqli_fetch_assoc($queryJenisMasalah)) { ?>
                                         <option value="<?= htmlspecialchars($jm['masalah']); ?>">
-                                        <?php } ?>
-                                </datalist>
+                                            <?= htmlspecialchars($jm['masalah']); ?>
+                                        </option>
+                                    <?php } ?>
+
+                                </select>
                             </div>
 
                             <div class="form-group">
@@ -445,6 +443,7 @@ $noFormAuto = "FPM-D/$urutFormat/$bulanRomawi/$tahun";
         });
     </script>
 
+    <?php require_once __DIR__ . '/../config/jenis_masalah_helper.php'; pilihJenisMasalahAset(); ?>
 </body>
 
 </html>

@@ -49,6 +49,11 @@ if (in_array($levelSaya, ['Dept Head', 'Staff'], true) && $deptSaya !== '') {
         $pihakSaya[] = 'Head IMP Plant 3';
     }
 }
+// SP Staff IMP sendiri (lupa membuat FPM dari pembahasan Asakai, lihat asakai_fpm_helper.php).
+$pihakStaffImpSaya = $levelSaya === 'Staff IMP' ? trim('Staff IMP ' . $plantSaya) : null;
+if ($pihakStaffImpSaya !== null) {
+    $pihakSaya[] = $pihakStaffImpSaya;
+}
 $labelSaya = $sayaPembantu ? 'Dept Anda' : 'Anda';
 
 $daftarMenunggu = array_values(array_unique(array_column($semuaData, 'menunggu')));
@@ -558,7 +563,7 @@ $urlFilter = function (array $ubah) {
                                 <tr class="<?= in_array($pihak, $pihakSaya, true) ? 'mon-row-saya' : '' ?>">
                                     <td class="mon-menunggu">
                                         <?= htmlspecialchars($pihak) ?>
-                                        <?php if (in_array($pihak, $pihakSaya, true)): ?> <span class="badge bg-primary"><?= $labelSaya ?></span><?php endif; ?>
+                                        <?php if (in_array($pihak, $pihakSaya, true)): ?> <span class="badge bg-primary"><?= $pihak === $pihakStaffImpSaya ? 'Anda' : $labelSaya ?></span><?php endif; ?>
                                     </td>
                                     <td><?= badgeLevelSp($s['level']) ?></td>
                                     <td style="white-space:nowrap"><?= monitoringFormatTgl($s['tgl']) ?></td>
@@ -568,7 +573,9 @@ $urlFilter = function (array $ubah) {
                                     </td>
                                     <td class="mon-sub" style="max-width:520px">
                                         <?= count($s['fpm']) ?> FPM:
-                                        <?= implode(', ', array_map(fn($f) => '<a href="' . htmlspecialchars($fpmDetailPage) . '?id=' . $f['id_fpm'] . '" title="'
+                                        <?= implode(', ', array_map(fn($f) => !empty($f['asakai'])
+                                            ? '<span title="' . htmlspecialchars($f['tahap']) . '">' . htmlspecialchars($f['no_form']) . '</span>'
+                                            : '<a href="' . htmlspecialchars($fpmDetailPage) . '?id=' . $f['id_fpm'] . '" title="'
                                             . htmlspecialchars($f['tahap']) . '">' . htmlspecialchars($f['no_form']) . '</a>', $s['fpm'])) ?>
                                     </td>
                                     <td>

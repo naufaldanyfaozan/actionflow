@@ -10,6 +10,7 @@ if (($_SESSION['dept'] ?? '') !== 'QA') {
 }
 
 include __DIR__ . '/../koneksi.php';
+require_once __DIR__ . '/../config/jenis_masalah_helper.php';
 
 mysqli_begin_transaction($koneksi);
 
@@ -34,6 +35,11 @@ try {
     $dept                 = $_POST['dept'] ?? '';
     $jenis_masalah        = $_POST['jenis_masalah'] ?? '';
     $jenis_masalah_detail = $_POST['jenis_masalah_detail'] ?? '';
+
+    // Jenis Masalah hanya boleh dari master (lihat config/jenis_masalah_helper.php).
+    if (!jenisMasalahTerdaftar($koneksi, $jenis_masalah)) {
+        throw new Exception(pesanJenisMasalahTidakTerdaftar($jenis_masalah));
+    }
 
     $tgl_ditemukan = fixDate($_POST['tgl_ditemukan'] ?? '');
     $tgl_pembuatan = fixDate($_POST['tgl_pembuatan'] ?? '');
