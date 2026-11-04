@@ -1,11 +1,9 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
 // Tombol "Perlu FPM" di pembahasan Asakai (form_pembahasan_asakai.php): buat sekarang /
 // buat nanti / batalkan. Lihat config/asakai_fpm_helper.php.
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("location:cek_login.php");
-    exit;
-}
+mulaiSessionAman();
+wajibLogin();
 
 include __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/../config/asakai_fpm_helper.php';

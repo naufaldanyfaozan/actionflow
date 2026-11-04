@@ -1,11 +1,12 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 include '../koneksi.php';
 
 if (isset($_POST['submit'])) {
-    $nama   = $_POST['nama_mesin'];
-    $plant  = $_POST['plant'];
+    $nama   = sqlAman($_POST['nama_mesin'] ?? '');
+    $plant  = inputPlant($_POST['plant'] ?? '');
 
     mysqli_query($koneksi, "INSERT INTO master_machine VALUES (NULL, '$nama', '$plant')");
     header("location:index.php");

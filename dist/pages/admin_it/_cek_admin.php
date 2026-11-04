@@ -1,15 +1,9 @@
 <?php
 
-// Semua halaman admin_it hanya untuk akun level "Admin IT".
-session_start();
-if (!isset($_SESSION['username'])) {
-    header('location:../index.html');
-    exit;
-}
-if (($_SESSION['level'] ?? '') !== 'Admin IT') {
-    http_response_code(403);
-    die('Halaman ini hanya untuk Admin IT.');
-}
+// Semua halaman admin_it hanya untuk akun level "Admin IT" (session aman, login, level & CSRF
+// lewat config/auth_helper.php; token admin_it_token di bawah tetap dipakai form Admin IT).
+require_once __DIR__ . '/../config/auth_helper.php';
+wajibLogin(['Admin IT']);
 
 include __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/../config/app_setting_helper.php';

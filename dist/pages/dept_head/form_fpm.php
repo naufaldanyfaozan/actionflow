@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../config/branding_helper.php';
+require_once __DIR__ . '/../config/auth_helper.php';
 session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+wajibLogin();
 
 include __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/../config/ng_detail_box.php';
@@ -11,13 +12,13 @@ require_once __DIR__ . '/../config/fpm_claim_approval_helper.php';
 require_once __DIR__ . '/../config/fpm_lampiran_helper.php';
 
 if (!$koneksi) {
-  die("Koneksi gagal: " . mysqli_connect_error());
+  die(pesanErrorDb('Koneksi database gagal', mysqli_connect_error()));
 }
 
 date_default_timezone_set('Asia/Jakarta');
 $date = date('Y-m-d');
 
-$id_fpm = $_GET['id'] ?? 0;
+$id_fpm = (int) ($_GET['id'] ?? 0);
 
 $username = $_SESSION['username'];
 

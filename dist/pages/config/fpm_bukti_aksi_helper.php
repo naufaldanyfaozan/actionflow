@@ -143,7 +143,7 @@ function prosesUploadBuktiAksi(array $uploads, string $fileUtama, int $jumlahFil
         $ext = strtolower(pathinfo($u['name'], PATHINFO_EXTENSION));
         $nama = namaFileUploadUnik($prefix, $ext, $uploadDir);
 
-        if (!move_uploaded_file($u['tmp'], $uploadDir . $nama)) {
+        if (!pindahkanUploadAman($u['tmp'], $uploadDir . $nama)) {
             throw new Exception("Gagal menyimpan file {$u['name']} pada $label di server. Silakan upload ulang.");
         }
 

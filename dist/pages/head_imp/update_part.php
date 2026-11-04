@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
+wajibLogin();
 include '../koneksi.php';
 
 $id         = $_POST['id'];
@@ -14,6 +16,7 @@ if ($id == "") {
         VALUES ('$namapart', '$partnumber', '$type', '$customer')");
 } else {
     // UPDATE
+    $id = (int)$id;
     mysqli_query($koneksi, "UPDATE master_part SET
         namapart='$namapart',
         partnumber='$partnumber',

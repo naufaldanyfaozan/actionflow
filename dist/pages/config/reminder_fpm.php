@@ -1,5 +1,11 @@
 <?php
 
+// Script cron: hanya boleh dijalankan lewat PHP CLI, tidak bisa dipicu dari URL
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('Akses ditolak.');
+}
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 

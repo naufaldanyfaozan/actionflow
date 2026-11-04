@@ -1,19 +1,20 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
 require_once __DIR__ . '/../config/branding_helper.php';
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+mulaiSessionAman();
+wajibLogin();
 include '../koneksi.php';
 
 if (!isset($koneksi)) {
   die("Variabel koneksi tidak ada");
 }
 
-$filterBulan = !empty($_GET['bulan']) ? $_GET['bulan'] : date('Y-m');
+$filterBulan = inputBulan('bulan');
 
 $userPlant = $_SESSION['plant'] ?? '';
 $userPlant = trim(str_ireplace('Plant', '', $userPlant));
 
-$filterPlant = $_GET['plant'] ?? $userPlant;
+$filterPlant = inputPlant($_GET['plant'] ?? $userPlant);
 
 $bulanIndo = [
   '01' => 'Januari',
@@ -574,7 +575,7 @@ if (!empty($_GET['export_overdue'])) {
 }
 
 // Delivery Monitor & Stock Casting adalah data staff Improvement, bukan FPM QA.
-$tanggalDelivery = $_GET['tanggal_delivery'] ?? date('Y-m-d');
+$tanggalDelivery = inputTanggal($_GET['tanggal_delivery'] ?? '', date('Y-m-d'));
 $query_delivery = null;
 
 if (!$isQA) {
@@ -1216,7 +1217,7 @@ if (!$isQA) {
         </div>
 
         <?php
-        $tanggalCasting = $_GET['tanggal_casting'] ?? date('Y-m-d');
+        $tanggalCasting = inputTanggal($_GET['tanggal_casting'] ?? '', date('Y-m-d'));
         $query_casting = mysqli_query($koneksi, "SELECT
                 id_casting,
                 part_number,

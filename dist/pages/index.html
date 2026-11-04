@@ -452,7 +452,13 @@
         })
         .catch(function () {});
 
-      if (new URLSearchParams(location.search).get("login_error") === "1") {
+      var loginError = new URLSearchParams(location.search).get("login_error");
+      if (loginError === "1" || loginError === "terkunci") {
+        if (loginError === "terkunci") {
+          // Terlalu banyak percobaan gagal (batas diatur Admin IT > Keamanan Login)
+          document.querySelector("#loginError span").textContent =
+            "Terlalu banyak percobaan login gagal. Coba lagi beberapa menit lagi.";
+        }
         document.getElementById("loginError").classList.add("show");
         history.replaceState(null, "", location.pathname);
       }

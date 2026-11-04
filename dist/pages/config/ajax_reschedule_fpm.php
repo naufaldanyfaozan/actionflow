@@ -6,7 +6,8 @@
  * file bukti[0][] (opsional, wajib kalau due_date_baru = hari ini; actual_date otomatis = hari ini).
  */
 
-session_start();
+require_once __DIR__ . '/auth_helper.php';
+mulaiSessionAman();
 header('Content-Type: application/json; charset=utf-8');
 date_default_timezone_set('Asia/Jakarta');
 
@@ -26,6 +27,9 @@ if (empty($_POST) && empty($_FILES) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) >
     echo json_encode(['ok' => false, 'pesan' => 'Upload gagal: total ukuran file terlalu besar untuk server (maks ' . ini_get('post_max_size') . '). Kurangi ukuran/jumlah file lalu coba lagi.']);
     exit;
 }
+
+// Token CSRF dikirim otomatis (header X-CSRF-Token) oleh skrip auth_helper di halaman pemanggil.
+csrfWajibValid();
 
 include __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/fpm_reschedule_helper.php';

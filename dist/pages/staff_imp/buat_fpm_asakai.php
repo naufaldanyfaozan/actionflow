@@ -1,14 +1,13 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
 include '../koneksi.php';
 
 if (!isset($koneksi)) {
     die("Variabel koneksi tidak ada");
 }
 
-if (!isset($_SESSION['username'])) {
-    header("location:cek_login.php");
-}
+wajibLogin();
 
 $username = $_SESSION['username'];
 

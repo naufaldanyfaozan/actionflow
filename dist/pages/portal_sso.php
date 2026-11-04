@@ -6,7 +6,8 @@
 // bukan data portal - supaya dept/plant/level yang dipakai fitur-fitur FPM
 // tetap konsisten dengan yang selama ini berjalan (login manual).
 
-session_start();
+require_once __DIR__ . '/config/auth_helper.php';
+mulaiSessionAman();
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/productionflow/config/portal_db.php';
 
@@ -32,6 +33,11 @@ if (!$akses['granted']) {
 $targetUsername = $akses['target_username'];
 
 include 'koneksi.php'; // $koneksi ke database fpm
+require_once __DIR__ . '/config/login_helper.php';
+
+// Kolom user.password di database FPM productionflow ikut diperlebar untuk hash password,
+// supaya sync dari FPM standalone (yang sudah menyimpan hash) tidak terpotong.
+siapkanKolomPasswordHash($koneksi);
 
 $stmt = $koneksi->prepare("SELECT * FROM user WHERE username = ?");
 $stmt->bind_param("s", $targetUsername);

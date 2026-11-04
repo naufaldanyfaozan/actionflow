@@ -89,7 +89,7 @@ function simpanPendukungAksiBaru($koneksi, int $idFpm, string $uploadDir, string
                 $ext = pastikanFormatFileDiizinkan($originalName, $jenisKegiatan);
                 $fileName = namaFileUploadUnik('SUPP', $ext, $uploadDir);
 
-                if (!move_uploaded_file($_FILES['pendukung']['tmp_name'][$jenis][$idAksi][$j], $uploadDir . $fileName)) {
+                if (!pindahkanUploadAman($_FILES['pendukung']['tmp_name'][$jenis][$idAksi][$j], $uploadDir . $fileName)) {
                     throw new Exception("Gagal menyimpan $jenisKegiatan ($originalName) di server. Silakan upload ulang.");
                 }
 

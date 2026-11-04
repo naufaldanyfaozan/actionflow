@@ -85,6 +85,17 @@ Plant user ada di `$_SESSION['plant']` dengan format `"Plant 1"`; di tabel FPM/A
 - **Aturan yang bisa diatur** (batas H+, jam reminder, dll) ada di `APP_SETTING_DEFINISI`
   (`config/app_setting_helper.php`), dibaca dengan `appSettingInt()` / `appSettingBool()` /
   `appSetting()`, diubah dari menu Admin IT. Jangan hardcode angka batas baru — tambahkan setting.
+- **Keamanan (audit 2026-11-04)** — wajib untuk halaman/endpoint baru:
+  - Halaman role diawali `require_once __DIR__ . '/../config/auth_helper.php'; wajibLogin();`
+    (session aman, redirect + `exit`, level sesuai folder `AUTH_LEVEL_FOLDER`, cek CSRF). Jangan
+    kembali ke pola `if (!isset($_SESSION["username"])) header(...)` tanpa exit.
+  - Token CSRF disisipkan otomatis ke `<form method="post">`, link `hapus*`, `fetch()` & XHR.
+    Endpoint `config/ajax_*.php` memanggil `csrfWajibValid()` sendiri. Aksi ubah data lewat GET
+    hanya boleh berupa link `hapus...` (dicek otomatis).
+  - Upload pakai `pindahkanUploadAman()` (bukan `move_uploaded_file`), folder `buatFolderUpload()`
+    / `mkdir(..., 0755)`. Error DB ke user lewat `pesanErrorDb()` — jangan echo `mysqli_error()`.
+  - Input filter yang masuk SQL lama: `(int)`, `inputBulan()`, `inputTanggal()`, `inputPlant()`,
+    `sqlAman()` (`config/keamanan_helper.php`).
 - Query baru pakai **prepared statement**. Kode lama banyak memakai string SQL langsung — jangan
   ubah kode lama yang tidak diminta.
 - `WA_NOTIF_ENABLED` / `EMAIL_NOTIF_ENABLED` otomatis **mati di Windows (XAMPP)** dan hidup di
@@ -153,8 +164,10 @@ Admin IT (tabel `wa_nomor_tambahan`).
 
 ## Catatan teknis yang diketahui
 
-- Tidak semua halaman role memeriksa `$_SESSION['level']` (hanya cek login).
-- Password user disimpan apa adanya (plain text) di tabel `user`.
+- Password user di-hash (`config/login_helper.php`); akun lama yang masih teks biasa otomatis
+  di-hash saat login berikutnya, jadi user baru boleh ditambahkan via phpMyAdmin dengan teks biasa.
+  Login gagal berulang dikunci sementara (tabel `login_gagal`, batas di Admin IT › Keamanan Login).
+- `vice_directur/form_fpm.php` error "ambilFpmRevisiHistory() undefined" (bug lama, folder historis).
 - `head_imp/proses_down_time.php` tidak menyimpan Jenis Masalah (bug lama, belum diperbaiki).
 - Form edit `staff/edit_fpm_qa_internal.php`, `staff_imp/edit_fpm_down_time.php`,
   `staff_imp/edit_fpm_internal.php` masih menerima Jenis Masalah ketik bebas.

@@ -7,7 +7,8 @@
  * Hanya Dept Head, Staff IMP dan Staff QA.
  */
 
-session_start();
+require_once __DIR__ . '/auth_helper.php';
+mulaiSessionAman();
 header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['username'])) {
@@ -29,6 +30,9 @@ if (!in_array($level, ['Dept Head', 'Staff IMP'], true) && !($level === 'Staff' 
     echo json_encode(['ok' => false, 'pesan' => 'Hanya Dept Head, Staff IMP dan Staff QA yang bisa menghapus file.']);
     exit;
 }
+
+// Token CSRF dikirim otomatis (header X-CSRF-Token) oleh skrip auth_helper di halaman pemanggil.
+csrfWajibValid();
 
 include __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/fpm_bukti_aksi_helper.php';

@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 include '../koneksi.php';
 
 $id = (int) $_GET['id'];

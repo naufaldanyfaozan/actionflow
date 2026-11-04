@@ -149,7 +149,7 @@ function simpanAksiJawabFpm($koneksi, int $id_fpm, string $jenis, array $snapsho
         }
 
         if (!$stmt->execute()) {
-            throw new Exception("Gagal menyimpan {$cfg['label']} baris " . ($i + 1) . ": " . $stmt->error);
+            throw new Exception(pesanErrorDb("Gagal menyimpan {$cfg['label']} baris " . ($i + 1), $stmt));
         }
 
         if ($barisLama !== null) {

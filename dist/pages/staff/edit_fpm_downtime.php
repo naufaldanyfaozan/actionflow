@@ -1,7 +1,8 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
 date_default_timezone_set('Asia/Jakarta');
-if (!isset($_SESSION["username"])) header("location:../cek_login.php");
+wajibLogin();
 
 include '../koneksi.php';
 require_once __DIR__ . '/../config/fpm_bukti_aksi_helper.php';
@@ -17,7 +18,7 @@ if (!isset($koneksi)) {
 $uploadDir = "../uploads/fpm_dt/";
 
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
 $id = $_GET['id'] ?? '';
@@ -177,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (!$stmt->execute()) {
-            throw new Exception("Gagal menyimpan data $tabel: " . $stmt->error);
+            throw new Exception(pesanErrorDb("Gagal menyimpan data $tabel", $stmt));
         }
 
         return $barisLama !== null ? (int) $barisLama['id'] : (int) $koneksi->insert_id;

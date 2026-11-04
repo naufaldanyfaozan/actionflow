@@ -157,7 +157,7 @@ function waValidasiNomorBaru(string $input): array
 function tambahWaNomor(mysqli $koneksi, string $nomor, string $peran, string $nama, string $oleh): ?string
 {
     if (!siapkanTabelWaTambahan($koneksi) || !siapkanTabelAppSetting($koneksi)) {
-        return 'Tabel nomor WA tidak bisa dibuat: ' . $koneksi->error;
+        return pesanErrorDb('Tabel nomor WA tidak bisa dibuat', $koneksi);
     }
     $semuaPeran = array_merge(...array_values(waPilihanPeran()));
     if (!isset($semuaPeran[$peran])) {
@@ -171,7 +171,7 @@ function tambahWaNomor(mysqli $koneksi, string $nomor, string $peran, string $na
     $stmt = $koneksi->prepare("INSERT INTO wa_nomor_tambahan (nomor, peran, nama, dibuat_oleh, dibuat_at) VALUES (?, ?, ?, ?, NOW())");
     $stmt->bind_param('ssss', $nomor, $peran, $nama, $oleh);
     if (!$stmt->execute()) {
-        return $koneksi->errno === 1062 ? "Nomor $nomor sudah terdaftar untuk " . waLabelPeran($peran) . '.' : 'Gagal menyimpan: ' . $koneksi->error;
+        return $koneksi->errno === 1062 ? "Nomor $nomor sudah terdaftar untuk " . waLabelPeran($peran) . '.' : pesanErrorDb('Gagal menyimpan', $koneksi);
     }
 
     $key = 'wa_tambah:' . $nomor;

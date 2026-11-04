@@ -1,7 +1,8 @@
 <?php
+require_once __DIR__ . '/config/auth_helper.php';
 require_once __DIR__ . '/config/branding_helper.php';
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+mulaiSessionAman();
+wajibLogin();
 
 include 'koneksi.php';
 
@@ -89,7 +90,7 @@ function tanggalSasaranMutu($tanggal): string
 
 // ================= FILTER =================
 $kategori = $_GET['kategori'] ?? 'fpm_internal';
-$filterBulan = !empty($_GET['bulan']) ? $_GET['bulan'] : date('Y-m');
+$filterBulan = inputBulan('bulan');
 
 $bulanIndo = [
     '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',

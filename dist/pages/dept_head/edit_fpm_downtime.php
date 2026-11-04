@@ -1,7 +1,8 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
 date_default_timezone_set('Asia/Jakarta');
-if (!isset($_SESSION["username"])) header("location:../cek_login.php");
+wajibLogin();
 
 include '../koneksi.php';
 require_once __DIR__ . '/../config/fpm_bukti_aksi_helper.php';
@@ -16,7 +17,7 @@ if (!isset($koneksi)) {
 $uploadDir = "../uploads/fpm_dt/";
 
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
 $id = $_GET['id'] ?? '';

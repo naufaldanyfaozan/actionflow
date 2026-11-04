@@ -1,10 +1,11 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 include '../koneksi.php';
 
-$id = $_GET['id'] ?? '';
+$id = (isset($_GET['id']) && ctype_digit((string) $_GET['id'])) ? $_GET['id'] : '';
 $namapart = $partnumber = $type = $customer = "";
 
 if ($id != "") {

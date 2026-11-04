@@ -1,5 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/auth_helper.php';
+wajibLogin();
+mulaiSessionAman();
 include '../koneksi.php';
 require_once __DIR__ . '/../config/asakai_bukti_helper.php';
 
@@ -24,7 +26,7 @@ if ($id_asakai <= 0) {
 
 $uploadDir = "../uploads/asakai/";
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
 $gagalUpload = [];
@@ -60,7 +62,7 @@ function uploadFiles($fieldName, $rowIndex, $prefix, $uploadDir)
 
         $tmp = $_FILES[$fieldName]['tmp_name'][$rowIndex][$i];
 
-        if (move_uploaded_file($tmp, $uploadDir . $newName)) {
+        if (pindahkanUploadAman($tmp, $uploadDir . $newName)) {
             $result[$i] = $newName;
         } else {
             $GLOBALS['gagalUpload'][] = "Server gagal menyimpan file pada $labelBaris.";

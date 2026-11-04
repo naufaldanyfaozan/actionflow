@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:../cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 // Staff non-QA boleh melihat dashboard ini (read-only); kartu yang menuju halaman
 // khusus Staff QA tidak dijadikan link untuk mereka.
 $isStaffQa = (($_SESSION['dept'] ?? '') === 'QA');
@@ -15,7 +16,7 @@ if (!isset($koneksi)) {
 // dept_head_qa/index.php (bukan cuma dipersonalisasi ke 1 username) - supaya angka yang
 // dilihat Staff QA dan Dept Head QA selalu sama/konsisten (satu pipeline yang sama,
 // cuma beda sudut pandang: Staff QA yang membuat, Dept Head QA yang approve).
-$filterBulan = !empty($_GET['bulan']) ? $_GET['bulan'] : date('Y-m');
+$filterBulan = inputBulan('bulan');
 
 $bulanIndo = [
     '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',

@@ -1,7 +1,8 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
 require_once __DIR__ . '/../config/branding_helper.php';
-session_start();
-if (!isset($_SESSION["username"])) header("location:../cek_login.php");
+mulaiSessionAman();
+wajibLogin();
 
 // Semua Staff (QA maupun non-QA) bisa memilih modul, sama seperti level lain.
 // Staff non-QA di modul FPM QA hanya melihat Dashboard, Sasaran Mutu & LOG TPDP

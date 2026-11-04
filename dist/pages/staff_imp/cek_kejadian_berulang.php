@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
+wajibLogin();
 include '../koneksi.php';
 
 $jenis_fpm     = $_POST['jenis_fpm'] ?? '';

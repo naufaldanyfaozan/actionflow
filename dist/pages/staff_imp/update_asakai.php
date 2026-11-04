@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 include '../koneksi.php';
 require_once __DIR__ . '/../config/asakai_bukti_helper.php';
@@ -10,7 +11,7 @@ if (!isset($koneksi)) {
     die("Variabel koneksi tidak ada");
 }
 
-$id = $_GET['id'];
+$id = (int) ($_GET['id'] ?? 0);
 
 /* =========================================================
    HANDLE SUBMIT MODAL "CATATAN REVISI" (kirim notif WA ke PIC)

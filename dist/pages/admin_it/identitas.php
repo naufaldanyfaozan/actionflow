@@ -31,7 +31,7 @@ function simpanUploadLogo(array $file, string $prefix): array
         return [null, 'folder logo tidak bisa dibuat'];
     }
     $nama = $prefix . '_' . date('YmdHis') . '_' . bin2hex(random_bytes(3)) . '.' . $ext;
-    if (!move_uploaded_file($file['tmp_name'], $folder . $nama)) {
+    if (!pindahkanUploadAman($file['tmp_name'], $folder . $nama)) {
         return [null, 'file tidak bisa disimpan'];
     }
     return [APP_LOGO_FOLDER . $nama, null];

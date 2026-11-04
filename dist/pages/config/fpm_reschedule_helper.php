@@ -71,13 +71,13 @@ function fpmRsStmt($koneksi, string $sql, string $types = '', ...$params): mysql
 {
     $stmt = $koneksi->prepare($sql);
     if (!$stmt) {
-        throw new RuntimeException('Query reschedule gagal: ' . $koneksi->error);
+        throw new RuntimeException(pesanErrorDb('Query reschedule gagal', $koneksi));
     }
     if ($types !== '') {
         $stmt->bind_param($types, ...$params);
     }
     if (!$stmt->execute()) {
-        throw new RuntimeException('Query reschedule gagal: ' . $stmt->error);
+        throw new RuntimeException(pesanErrorDb('Query reschedule gagal', $stmt));
     }
     return $stmt;
 }

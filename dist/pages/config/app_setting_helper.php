@@ -17,6 +17,7 @@ const APP_SETTING_GRUP = [
     'claim'    => ['judul' => 'FPM Claim Machining', 'ikon' => 'bi-gear-wide-connected'],
     'reminder' => ['judul' => 'Reminder WhatsApp', 'ikon' => 'bi-whatsapp'],
     'upload'   => ['judul' => 'Upload Bukti & Reschedule', 'ikon' => 'bi-cloud-upload'],
+    'keamanan' => ['judul' => 'Keamanan Login', 'ikon' => 'bi-shield-lock'],
     // Grup dengan 'halaman' punya halaman Admin IT sendiri (tidak tampil di index.php).
     'email'    => ['judul' => 'Email SP ke HRD', 'ikon' => 'bi-envelope', 'halaman' => 'notifikasi.php'],
     'branding' => ['judul' => 'Identitas Aplikasi', 'ikon' => 'bi-palette', 'halaman' => 'identitas.php'],
@@ -68,6 +69,10 @@ const APP_SETTING_DEFINISI = [
     'reschedule_maks'            => ['grup' => 'upload', 'tipe' => 'int', 'default' => 3, 'min' => 1, 'max' => 10, 'satuan' => 'kali', 'label' => 'Maksimal reschedule due date per countermeasure FPM'],
     'bukti_fpm_maks_file'        => ['grup' => 'upload', 'tipe' => 'int', 'default' => 3, 'min' => 1, 'max' => 10, 'satuan' => 'file', 'label' => 'Maksimal file bukti per countermeasure FPM'],
     'bukti_asakai_maks_file'     => ['grup' => 'upload', 'tipe' => 'int', 'default' => 3, 'min' => 1, 'max' => 3, 'satuan' => 'file', 'label' => 'Maksimal file bukti per countermeasure Asakai', 'info' => 'Maksimal 3 karena slot file di tabel Asakai hanya 3.'],
+
+    // ---------- Keamanan login (config/login_helper.php) ----------
+    'login_maks_gagal'           => ['grup' => 'keamanan', 'tipe' => 'int', 'default' => 5, 'min' => 3, 'max' => 20, 'satuan' => 'kali', 'label' => 'Maksimal percobaan login gagal per akun', 'info' => 'Lewat batas ini akun dikunci sementara. Dari satu IP batasnya 4x lipat (semua akun).'],
+    'login_kunci_menit'          => ['grup' => 'keamanan', 'tipe' => 'int', 'default' => 15, 'min' => 1, 'max' => 1440, 'satuan' => 'menit', 'label' => 'Lama kunci setelah batas percobaan gagal tercapai'],
 
     // ---------- Email SP ke HRD (halaman notifikasi.php) ----------
     'email_sp_aktif'             => ['grup' => 'email', 'tipe' => 'bool', 'default' => 0, 'label' => 'Kirim email otomatis ke HRD saat ada SP baru', 'info' => 'Selama nonaktif, SP baru tidak dikirim (juga tidak menumpuk untuk dikirim belakangan). Di XAMPP/local email selalu mati.'],
@@ -192,7 +197,7 @@ function appSettingValidasi(string $key, $nilai): ?string
 function simpanAppSetting(mysqli $koneksi, array $input, string $oleh): array
 {
     if (!siapkanTabelAppSetting($koneksi)) {
-        return ['Tabel pengaturan tidak bisa dibuat: ' . $koneksi->error];
+        return [pesanErrorDb('Tabel pengaturan tidak bisa dibuat', $koneksi)];
     }
 
     $error = [];

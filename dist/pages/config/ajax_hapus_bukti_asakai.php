@@ -6,7 +6,8 @@
  * POST: jenis (dt/ng), id_cm, file. Hanya Dept Head dan Staff IMP.
  */
 
-session_start();
+require_once __DIR__ . '/auth_helper.php';
+mulaiSessionAman();
 header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['username'])) {
@@ -20,6 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['ok' => false, 'pesan' => 'Metode tidak diizinkan.']);
     exit;
 }
+
+// Token CSRF dikirim otomatis (header X-CSRF-Token) oleh skrip auth_helper di halaman pemanggil.
+csrfWajibValid();
 
 include __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/asakai_bukti_helper.php';

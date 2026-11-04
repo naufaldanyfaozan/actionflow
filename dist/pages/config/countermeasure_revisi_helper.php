@@ -170,7 +170,7 @@ function kirimCatatanRevisiCm($koneksi, string $sumber, int $idInduk, ?string $r
     }
 
     if (!$stmt->execute()) {
-        return ['ok' => false, 'pesan' => 'Gagal menyimpan catatan: ' . $stmt->error];
+        return ['ok' => false, 'pesan' => pesanErrorDb('Gagal menyimpan catatan', $stmt)];
     }
 
     if ($baris) {
@@ -655,7 +655,7 @@ function prosesTindakLanjutRevisiPic($koneksi, string $sessionDept, string $oleh
 
     $refCfg = $cfg['refs'][$revisi['ref_table']];
     if (!is_dir($cfg['uploadDir'])) {
-        mkdir($cfg['uploadDir'], 0777, true);
+        mkdir($cfg['uploadDir'], 0755, true);
     }
 
     foreach ($uploads as $u) {
@@ -692,7 +692,7 @@ function prosesTindakLanjutRevisiPic($koneksi, string $sessionDept, string $oleh
         $semua = $lama;
         foreach ($uploads as $u) {
             $nama = namaFileUploadUnik($refCfg['prefix'] . '_REV', pathinfo($u['name'], PATHINFO_EXTENSION), $cfg['uploadDir']);
-            if (!move_uploaded_file($u['tmp'], $cfg['uploadDir'] . $nama)) {
+            if (!pindahkanUploadAman($u['tmp'], $cfg['uploadDir'] . $nama)) {
                 return ['ok' => false, 'pesan' => "Server gagal menyimpan file {$u['name']}. Silakan coba lagi."];
             }
             $semua[] = $nama;
@@ -721,7 +721,7 @@ function prosesTindakLanjutRevisiPic($koneksi, string $sessionDept, string $oleh
         $stmt->bind_param("ssii", $fileUtama, $hariIni, $refId, $idInduk);
     }
     if (!$stmt->execute()) {
-        return ['ok' => false, 'pesan' => 'Gagal menyimpan file: ' . $stmt->error];
+        return ['ok' => false, 'pesan' => pesanErrorDb('Gagal menyimpan file', $stmt)];
     }
     if ($tambahanFpm) {
         simpanFileTambahanAksi($koneksi, $jenis, $refId, $tambahanFpm);

@@ -82,7 +82,7 @@ function renderClaimMachiningDashboardWidget($koneksi, $username = null)
     // halaman dashboard (mysqli_fetch_assoc menolak argumen bool di PHP 8.1+), cukup
     // sembunyikan widget ini dan tetap render sisa dashboard.
     if (!$qDept) {
-        echo "<!-- Widget FPM Claim Machining dilewati: " . htmlspecialchars(mysqli_error($koneksi)) . " -->";
+        error_log('Widget FPM Claim Machining dilewati: ' . mysqli_error($koneksi));
         return;
     }
 
@@ -119,7 +119,7 @@ function renderClaimMachiningDashboardWidget($koneksi, $username = null)
             }
         }
     } else {
-        echo "<!-- Query overdue FPM Claim Machining dilewati: " . htmlspecialchars(mysqli_error($koneksi)) . " -->";
+        error_log('Query overdue FPM Claim Machining dilewati: ' . mysqli_error($koneksi));
     }
 ?>
     <div class="row section g-3">

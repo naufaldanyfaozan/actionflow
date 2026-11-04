@@ -1,9 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("location:cek_login.php");
-    exit;
-}
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 include '../koneksi.php';
 require_once __DIR__ . '/../config/upload_bukti_ui_helper.php';
@@ -17,7 +15,7 @@ $id_asakai = (int) $_POST['id_asakai'];
 
 $uploadDir = "../uploads/asakai/";
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
 function uploadFiles($fieldName, $groupIndex, $rowIndex, $prefix, $uploadDir)
@@ -45,7 +43,7 @@ function uploadFiles($fieldName, $groupIndex, $rowIndex, $prefix, $uploadDir)
 
         $tmp = $_FILES[$fieldName]['tmp_name'][$groupIndex][$rowIndex][$i];
 
-        if (move_uploaded_file($tmp, $uploadDir . $newName)) {
+        if (pindahkanUploadAman($tmp, $uploadDir . $newName)) {
             $result[$i] = $newName;
         }
     }

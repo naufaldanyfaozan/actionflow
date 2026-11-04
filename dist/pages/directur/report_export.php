@@ -1,14 +1,15 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 include '../koneksi.php';
 
 if (!isset($koneksi)) {
     die("Variabel koneksi tidak ada");
 }
 
-$filterBulan = !empty($_GET['bulan']) ? $_GET['bulan'] : date('Y-m');
-$filterPlant = $_GET['plant'] ?? '';
+$filterBulan = inputBulan('bulan');
+$filterPlant = inputPlant($_GET['plant'] ?? '');
 
 $bulanIndo = [
     '01' => 'Januari',

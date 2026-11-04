@@ -1,8 +1,10 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
+wajibLogin();
 
 include '../koneksi.php';
 
-$keyword = $_GET['keyword'] ?? '';
+$keyword = sqlAman($_GET['keyword'] ?? '');
 
 $query = mysqli_query($koneksi,"
     SELECT

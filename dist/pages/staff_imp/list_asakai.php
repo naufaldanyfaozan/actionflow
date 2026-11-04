@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 include '../koneksi.php';
 require_once __DIR__ . '/../config/asakai_summary_helper.php';
@@ -190,7 +191,7 @@ $query = mysqli_query($koneksi, "SELECT
 ");
 
 if (!$query) {
-    die("Query error (Summary Asakai): " . mysqli_error($koneksi));
+    die(pesanErrorDb('Gagal memuat ringkasan Asakai', $koneksi));
 }
 
 $tglFilterDelivery = mysqli_real_escape_string($koneksi, $_GET['tgl_akhir']);

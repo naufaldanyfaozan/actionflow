@@ -102,7 +102,7 @@ function simpanLampiranBaru($koneksi, $id_fpm, $uploadDir)
         $tmpName = $_FILES['lampiran_file']['tmp_name'][$i];
         $fileName = namaFileUploadUnik('LAMP', $ext, $uploadDir);
 
-        if (!move_uploaded_file($tmpName, $uploadDir . $fileName)) {
+        if (!pindahkanUploadAman($tmpName, $uploadDir . $fileName)) {
             throw new Exception("Gagal menyimpan Lampiran FPM ($originalName) di server. Silakan upload ulang.");
         }
 
@@ -201,7 +201,7 @@ function simpanFileTambahanBaruUpload($uploadedFiles, $uploadDir, $prefix, $rowU
 
         $fileName = namaFileUploadUnik($prefix, $ext, $uploadDir);
 
-        if (!move_uploaded_file($up['tmp_name'], $uploadDir . $fileName)) {
+        if (!pindahkanUploadAman($up['tmp_name'], $uploadDir . $fileName)) {
             throw new Exception("Gagal menyimpan file tambahan $jenisKegiatan ({$up['original_name']}) di server. Silakan upload ulang.");
         }
 

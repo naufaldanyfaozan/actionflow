@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
+wajibLogin(['Staff IMP']);
+
 include '../koneksi.php';
 
 if (isset($_POST['update'])) {
@@ -11,6 +14,6 @@ if (isset($_POST['update'])) {
     if (mysqli_query($koneksi, $query)) {
         header("location:master_problem.php?pesan=update_berhasil");
     } else {
-        echo "Error: " . mysqli_error($koneksi);
+        echo pesanErrorDb('Gagal menyimpan data', $koneksi);
     }
 }

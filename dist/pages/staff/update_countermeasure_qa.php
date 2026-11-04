@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:../cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 if (($_SESSION['dept'] ?? '') !== 'QA') {
     die('Akses ditolak: fitur Verifikasi Countermeasure hanya untuk Staff QA.');
@@ -86,7 +87,7 @@ if (!$isClaimMachQa ||(int) ($_POST['id_fpm'] ?? $fpm['id_fpm']) !== (int) $fpm[
 $uploadDir = "../uploads/fpm_dt/";
 
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
 /* =========================================================

@@ -113,11 +113,11 @@ if (!function_exists('simpanFotoEdit')) {
             }
 
             if (!is_dir($folder)) {
-                mkdir($folder, 0777, true);
+                mkdir($folder, 0755, true);
             }
 
             $namaFile = 'FPM_' . $id_fpm . '_' . date('YmdHis') . '_' . ($slot + 1) . '.' . $ext;
-            if (!move_uploaded_file($_FILES['foto_ng']['tmp_name'][$k], $folder . $namaFile)) {
+            if (!pindahkanUploadAman($_FILES['foto_ng']['tmp_name'][$k], $folder . $namaFile)) {
                 throw new Exception("Gagal upload file.");
             }
 

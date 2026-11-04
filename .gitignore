@@ -42,8 +42,9 @@ bower_components/
 # PHP dependencies (installable via `composer install`)
 vendor/
 
-# User-uploaded files
-dist/pages/uploads/
+# User-uploaded files (kecuali .htaccess pengaman folder)
+dist/pages/uploads/*
+!dist/pages/uploads/.htaccess
 
 # Docs
 /docs/_site/
@@ -68,6 +69,7 @@ dist/pages/config/wa_nomor.php
 # Foto upload FPM dari user (data produksi) - folder tetap ada lewat .gitkeep.
 dist/pages/upload_fpm/*
 !dist/pages/upload_fpm/.gitkeep
+!dist/pages/upload_fpm/.htaccess
 
 # Logo hasil upload Admin IT > Identitas Aplikasi (beda per instalasi).
 src/assets/img/branding/

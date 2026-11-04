@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:../cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 include __DIR__ . '/../koneksi.php';
 
@@ -10,7 +11,7 @@ if (!isset($koneksi)) {
 
 // Filter bulan yang sama polanya dengan dept_head_qa/index.php & staff/index_qa.php,
 // dipakai buat section "Sasaran Mutu - FPM Claim Machining" di bawah.
-$filterBulan = !empty($_GET['bulan']) ? $_GET['bulan'] : date('Y-m');
+$filterBulan = inputBulan('bulan');
 
 $bulanIndo = [
     '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',

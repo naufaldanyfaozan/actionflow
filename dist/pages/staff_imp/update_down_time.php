@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 include '../koneksi.php';
 
@@ -70,5 +71,5 @@ if ($updateHeader && $updateDetail) {
         window.location='form_fpm.php?id=$id_fpm';
     </script>";
 } else {
-    die("Gagal update: " . $koneksi->error);
+    die(pesanErrorDb('Gagal update', $koneksi));
 }

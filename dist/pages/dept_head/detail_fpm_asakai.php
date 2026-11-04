@@ -1,10 +1,11 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
 session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+wajibLogin();
 
 include '../koneksi.php';
 
-$id = $_GET['id'] ?? 0;
+$id = (int) ($_GET['id'] ?? 0);
 
 /* HEADER */
 $qHeader = mysqli_query($koneksi, "SELECT * FROM asakai_header WHERE id_asakai='$id'");

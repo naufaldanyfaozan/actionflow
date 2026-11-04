@@ -58,7 +58,7 @@ function simpanFileTunggalTanpaTimpa(string $fileLama, ?array $upload, bool $hap
             throw new Exception('Ukuran video melebihi 10MB. Silakan pilih file yang lebih kecil.');
         }
         $nama = namaFileUploadUnik($prefix, pathinfo($upload['name'], PATHINFO_EXTENSION), $uploadDir);
-        if (!move_uploaded_file($upload['tmp_name'], $uploadDir . $nama)) {
+        if (!pindahkanUploadAman($upload['tmp_name'], $uploadDir . $nama)) {
             throw new Exception('Server gagal menyimpan file ' . $upload['name'] . '. Silakan upload ulang.');
         }
     } else {

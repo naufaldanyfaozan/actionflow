@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:../cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 // FPM Claim Machining: dept mana pun boleh mengisi/update perbaikan, jadi
 // TIDAK ada gate dept==='QA' di sini (beda dengan jawab_fpm_qa.php).
@@ -108,7 +109,7 @@ if (!$fpm) {
 $uploadDir = "../uploads/fpm_dt/";
 
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

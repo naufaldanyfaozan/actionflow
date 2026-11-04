@@ -1,5 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/auth_helper.php';
+wajibLogin();
+mulaiSessionAman();
 include '../koneksi.php';
 
 if (isset($_POST['save'])) {

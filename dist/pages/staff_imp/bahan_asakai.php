@@ -1,5 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/auth_helper.php';
+wajibLogin();
+mulaiSessionAman();
 include '../koneksi.php';
 
 if (!isset($koneksi)) {
@@ -24,7 +26,7 @@ if (isset($_GET['hapus_tambahan'])) {
     exit;
 }
 
-$tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+$tanggal = inputTanggal($_GET['tanggal'] ?? '', date('Y-m-d'));
 $grup = isset($_GET['grup']) ? $_GET['grup'] : 'auto';
 
 // Cari tanggal Jumat & Sabtu terakhir pada/sebelum tanggal acuan.
@@ -74,7 +76,7 @@ $username = $_SESSION['username'] ?? '';
 $plant = '';
 
 if (isset($_GET['plant']) && $_GET['plant'] !== '') {
-    $plant = $_GET['plant'];
+    $plant = inputPlant($_GET['plant']);
 } else {
     if ($username == 'doni') {
         $plant = 1;

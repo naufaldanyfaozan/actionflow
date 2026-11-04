@@ -1,0 +1,12 @@
+# Folder config/ berisi helper PHP, file rahasia & migration SQL - tidak untuk dibuka dari browser.
+# Pengecualian: endpoint ajax_*.php yang dipanggil fetch() dari halaman role
+# (masing-masing memeriksa login, metode POST, level & token CSRF sendiri).
+Options -Indexes
+
+<FilesMatch ".*">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^ajax_[A-Za-z0-9_]+\.php$">
+    Require all granted
+</FilesMatch>

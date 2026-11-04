@@ -27,7 +27,8 @@ const TS_SINONIM = [
     ['alarm', 'trip', 'stop'],
 ];
 
-session_start();
+require_once __DIR__ . '/auth_helper.php';
+mulaiSessionAman();
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['username'])) {
@@ -35,6 +36,9 @@ if (!isset($_SESSION['username'])) {
     echo json_encode(['error' => 'Sesi Anda telah berakhir. Silakan login ulang.']);
     exit;
 }
+
+// Token CSRF dikirim otomatis (header X-CSRF-Token) oleh skrip auth_helper di halaman pemanggil.
+csrfWajibValid();
 
 include __DIR__ . '/../koneksi.php';
 include __DIR__ . '/riwayat_countermeasure_helper.php';

@@ -1,21 +1,41 @@
 <?php
 
-session_start();
+require_once __DIR__ . '/config/auth_helper.php';
+mulaiSessionAman();
 
 include 'koneksi.php';
+require_once __DIR__ . '/config/login_helper.php';
 
-$username = $_POST['username'];
-$password = $_POST['password'];
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+	header("location:index.html");
+	exit;
+}
 
-$stmt = mysqli_prepare($koneksi, "SELECT * FROM user WHERE username=? AND password=?");
-mysqli_stmt_bind_param($stmt, "ss", $username, $password);
-mysqli_stmt_execute($stmt);
-$login = mysqli_stmt_get_result($stmt);
-$cek = mysqli_num_rows($login);
+$username = trim((string) ($_POST['username'] ?? ''));
+$password = (string) ($_POST['password'] ?? '');
+$ip       = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
 
-if ($cek > 0) {
+if ($username === '' || $password === '') {
+	header("location:index.html?login_error=1");
+	exit;
+}
 
-	$data = mysqli_fetch_assoc($login);
+// Terlalu banyak percobaan gagal -> tolak tanpa memeriksa password (lihat config/login_helper.php)
+if (loginSedangDikunci($koneksi, $username, $ip)) {
+	header("location:index.html?login_error=terkunci");
+	exit;
+}
+
+// Password diverifikasi dengan hash; password lama (teks biasa) otomatis di-hash saat login
+$data = loginVerifikasi($koneksi, $username, $password);
+
+if ($data !== null) {
+
+	loginBersihkanGagal($koneksi, $username);
+
+	// ID session baru setelah login (cegah session fixation) + token CSRF baru
+	session_regenerate_id(true);
+	unset($_SESSION['csrf_token']);
 
 	$_SESSION['username'] 	= $data['username'];
 	$_SESSION['level']    	= $data['level'];
@@ -82,5 +102,6 @@ if ($cek > 0) {
 	</script>";
 	}
 } else {
+	loginCatatGagal($koneksi, $username, $ip);
 	header("location:index.html?login_error=1");
 }

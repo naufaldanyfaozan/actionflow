@@ -40,7 +40,7 @@ function exportListFpmExcelJikaDiminta(string $judul): void
             kirimExcelDariHtmlListFpm($html, $judul);
         } catch (Throwable $e) {
             error_log('Export Excel list FPM gagal: ' . $e->getMessage());
-            echo 'Export Excel gagal: ' . htmlspecialchars($e->getMessage());
+            echo 'Export Excel gagal. Silakan coba lagi atau hubungi Admin IT.';
         }
     });
 }

@@ -235,23 +235,24 @@ function renderLogTpdpPage($koneksi, $jenisLog, $detailPage = 'form_fpm.php')
                     <?php else: ?>
                         <?php $no = 1; foreach ($rows as $row): ?>
                             <?php
-                            $qDetail = mysqli_query($koneksi, "SELECT * FROM fpm_detail_masalah WHERE id_fpm = '{$row['id_fpm']}' LIMIT 1");
+                            $idFpmRow = (int) $row['id_fpm'];
+                            $qDetail = mysqli_query($koneksi, "SELECT * FROM fpm_detail_masalah WHERE id_fpm = $idFpmRow LIMIT 1");
                             $detail = mysqli_fetch_assoc($qDetail) ?: [];
 
-                            $qAnalisa = mysqli_query($koneksi, "SELECT * FROM fpm_analisa WHERE id_fpm = '{$row['id_fpm']}' ORDER BY jenis ASC, id ASC");
+                            $qAnalisa = mysqli_query($koneksi, "SELECT * FROM fpm_analisa WHERE id_fpm = $idFpmRow ORDER BY jenis ASC, id ASC");
                             $analisaRows = mysqli_fetch_all($qAnalisa, MYSQLI_ASSOC) ?: [];
 
-                            $qCorrective = mysqli_query($koneksi, "SELECT * FROM fpm_corrective_action WHERE id_fpm = '{$row['id_fpm']}' ORDER BY id ASC");
+                            $qCorrective = mysqli_query($koneksi, "SELECT * FROM fpm_corrective_action WHERE id_fpm = $idFpmRow ORDER BY id ASC");
                             $correctiveRows = mysqli_fetch_all($qCorrective, MYSQLI_ASSOC) ?: [];
 
-                            $qPreventive = mysqli_query($koneksi, "SELECT * FROM fpm_preventive_action WHERE id_fpm = '{$row['id_fpm']}' ORDER BY id ASC");
+                            $qPreventive = mysqli_query($koneksi, "SELECT * FROM fpm_preventive_action WHERE id_fpm = $idFpmRow ORDER BY id ASC");
                             $preventiveRows = mysqli_fetch_all($qPreventive, MYSQLI_ASSOC) ?: [];
 
-                            $qDokumen = mysqli_query($koneksi, "SELECT DISTINCT dokumen FROM fpm_review_dokumen WHERE id_fpm = '{$row['id_fpm']}'");
+                            $qDokumen = mysqli_query($koneksi, "SELECT DISTINCT dokumen FROM fpm_review_dokumen WHERE id_fpm = $idFpmRow");
                             $dokumenSet = [];
                             while ($d = mysqli_fetch_assoc($qDokumen)) { $dokumenSet[strtoupper(trim($d['dokumen']))] = true; }
 
-                            $qSimilar = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM fpm_similar WHERE id_fpm = '{$row['id_fpm']}'");
+                            $qSimilar = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM fpm_similar WHERE id_fpm = $idFpmRow");
                             $hasSimilar = (int) (mysqli_fetch_assoc($qSimilar)['total'] ?? 0) > 0;
 
                             $hasVerifikasi = !empty(trim($detail['verification_3_bulan'] ?? ''));

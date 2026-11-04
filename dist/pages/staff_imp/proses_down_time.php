@@ -1,9 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("location:cek_login.php");
-    exit;
-}
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 include __DIR__ . '/../koneksi.php';
 require_once __DIR__ . '/../config/jenis_masalah_helper.php';
@@ -203,12 +201,12 @@ try {
             }
 
             if (!is_dir($folder)) {
-                mkdir($folder, 0777, true);
+                mkdir($folder, 0755, true);
             }
 
             $namaFile = 'FPM_' . $id_fpm . '_' . date('YmdHis') . '_' . ($slot + 1) . '.' . $ext;
 
-            if (!move_uploaded_file($_FILES['dokumen_ng']['tmp_name'][$k], $folder . $namaFile)) {
+            if (!pindahkanUploadAman($_FILES['dokumen_ng']['tmp_name'][$k], $folder . $namaFile)) {
                 throw new Exception("Gagal upload file.");
             }
 

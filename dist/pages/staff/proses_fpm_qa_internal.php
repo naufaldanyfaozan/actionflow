@@ -1,9 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("location:cek_login.php");
-    exit;
-}
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 if (($_SESSION['dept'] ?? '') !== 'QA') {
     die('Halaman ini hanya untuk Staff QA.');
@@ -173,13 +171,13 @@ try {
         $folder = __DIR__ . '/../upload_fpm/';
 
         if (!is_dir($folder)) {
-            mkdir($folder, 0777, true);
+            mkdir($folder, 0755, true);
         }
 
         $namaFile = 'FPM_' . $id_fpm . '_' . date('YmdHis') . '.' . $ext;
 
         if (
-            !move_uploaded_file($_FILES['dokumen_ng']['tmp_name'], $folder . $namaFile)
+            !pindahkanUploadAman($_FILES['dokumen_ng']['tmp_name'], $folder . $namaFile)
         ) {
             throw new Exception("Gagal upload file.");
         }

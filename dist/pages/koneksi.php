@@ -35,9 +35,12 @@ if (!$koneksi) {
 	$koneksi = @mysqli_connect(...$kredensialCadangan);
 }
 
-// Check connection
+// Helper keamanan bersama (pesan error DB, upload aman, validasi input) - lihat file-nya.
+require_once __DIR__ . '/config/keamanan_helper.php';
+
+// Check connection - detail error hanya ke log server, tidak ditampilkan ke user
 if (mysqli_connect_errno()) {
-	echo "Koneksi database gagal : " . mysqli_connect_error();
+	echo pesanErrorDb('Koneksi database gagal', mysqli_connect_error());
 }
 
 define('MAX_VIDEO_UPLOAD_SIZE', 10 * 1024 * 1024); // 10MB

@@ -1,10 +1,17 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
 if (!isset($_SESSION["username"])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Belum login']);
     exit;
 }
+if (($_SESSION['level'] ?? '') !== 'Staff IMP') {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Akses ditolak']);
+    exit;
+}
+csrfWajibValid();
 
 include '../koneksi.php';
 

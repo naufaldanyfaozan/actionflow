@@ -1,7 +1,8 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
 require_once __DIR__ . '/../config/branding_helper.php';
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+mulaiSessionAman();
+wajibLogin();
 
 $username = $_SESSION["username"];
 
@@ -12,7 +13,7 @@ require_once __DIR__ . '/../config/fpm_lampiran_helper.php';
 date_default_timezone_set('Asia/Jakarta');
 $date = date('Y-m-d');
 
-$id_fpm = $_GET['id'] ?? 0;
+$id_fpm = (int) ($_GET['id'] ?? 0);
 
 $qHeader = mysqli_query($koneksi, "SELECT * FROM fpm_header WHERE id_fpm = '$id_fpm'");
 

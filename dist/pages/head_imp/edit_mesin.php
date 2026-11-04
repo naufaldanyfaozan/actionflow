@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 include '../koneksi.php';
 
 $id = (int)$_GET['id'];
@@ -8,8 +9,8 @@ $data = mysqli_query($koneksi, "SELECT * FROM master_machine WHERE id='$id'");
 $d = mysqli_fetch_array($data);
 
 if (isset($_POST['update'])) {
-    $nama = $_POST['nama_mesin'];
-    $plant = $_POST['plant'];
+    $nama = sqlAman($_POST['nama_mesin'] ?? '');
+    $plant = inputPlant($_POST['plant'] ?? '');
 
     mysqli_query($koneksi, "UPDATE master_machine 
         SET nama_mesin='$nama', plant='$plant' 

@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) { header("location:../cek_login.php"); exit; }
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 if (($_SESSION['dept'] ?? '') !== 'QA') { header("location:index.php"); exit; }
 include '../koneksi.php';
 
@@ -23,7 +24,7 @@ if (isset($_POST['tambah'])) {
         if (mysqli_query($koneksi, $sql)) {
             header("Location: master_problem.php");
         } else {
-            echo "Error: " . mysqli_error($koneksi);
+            echo pesanErrorDb('Gagal menyimpan data', $koneksi);
         }
     }
 }

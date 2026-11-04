@@ -1,15 +1,16 @@
 <?php
+require_once __DIR__ . '/../config/auth_helper.php';
 require_once __DIR__ . '/../config/branding_helper.php';
-session_start();
-if (!isset($_SESSION["username"])) header("location:cek_login.php");
+mulaiSessionAman();
+wajibLogin();
 include '../koneksi.php';
 
 if (!isset($koneksi)) {
   die("Variabel koneksi tidak ada");
 }
 
-$filterBulan = !empty($_GET['bulan']) ? $_GET['bulan'] : date('Y-m');
-$filterPlant = $_GET['plant'] ?? '';
+$filterBulan = inputBulan('bulan');
+$filterPlant = inputPlant($_GET['plant'] ?? '');
 
 $bulanIndo = [
   '01' => 'Januari',
@@ -484,7 +485,7 @@ while ($row = mysqli_fetch_assoc($queryAsakaiOverdue)) {
   $asakaiOverdue[] = $row;
 }
 
-$tanggalDelivery = $_GET['tanggal_delivery'] ?? date('Y-m-d');
+$tanggalDelivery = inputTanggal($_GET['tanggal_delivery'] ?? '', date('Y-m-d'));
 $query_delivery = mysqli_query($koneksi, "SELECT
         fdm.id_monitor,
         fdm.nama_part,
@@ -1165,7 +1166,7 @@ $query_delivery = mysqli_query($koneksi, "SELECT
         </div>
 
         <?php
-        $tanggalCasting = $_GET['tanggal_casting'] ?? date('Y-m-d');
+        $tanggalCasting = inputTanggal($_GET['tanggal_casting'] ?? '', date('Y-m-d'));
         $query_casting = mysqli_query($koneksi, "SELECT
                 id_casting,
                 part_number,

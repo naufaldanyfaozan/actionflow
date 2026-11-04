@@ -1,0 +1,15 @@
+# Folder upload user: file di sini hanya boleh diunduh/ditampilkan, tidak boleh dieksekusi.
+Options -Indexes -ExecCGI
+
+# Matikan PHP di folder ini (hanya berlaku bila PHP berjalan sebagai modul Apache)
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+# Tolak akses ke file script apa pun (berlaku juga untuk PHP-FPM / CGI di hosting)
+<FilesMatch "(?i)\.(php\d?|phtml|phar|phps|pht|cgi|pl|py|sh|shtml|htaccess)$">
+    Require all denied
+</FilesMatch>

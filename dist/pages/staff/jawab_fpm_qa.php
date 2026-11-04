@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) header("location:../cek_login.php");
+require_once __DIR__ . '/../config/auth_helper.php';
+mulaiSessionAman();
+wajibLogin();
 
 if (($_SESSION['dept'] ?? '') !== 'QA') {
     die('Halaman ini hanya untuk Staff QA.');
@@ -92,7 +93,7 @@ if (!$fpm) {
 $uploadDir = "../uploads/fpm_dt/";
 
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
