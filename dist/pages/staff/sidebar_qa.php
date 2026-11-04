@@ -1,16 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/branding_helper.php';
-$verifikasiQaBadgeCount = 0;
-$revisiDiperbaikiQaBadgeCount = 0;
-$rescheduleQaBadgeCount = 0;
-if (isset($koneksi) && (($_SESSION['dept'] ?? '') === 'QA')) {
-    require_once __DIR__ . '/../config/verifikasi_countermeasure_helper.php';
-    $verifikasiQaBadgeCount = countPendingCountermeasureVerifikasi($koneksi, '', true)['fpm'];
-    require_once __DIR__ . '/../config/countermeasure_revisi_helper.php';
-    $revisiDiperbaikiQaBadgeCount = count(ambilRevisiPerluDicekQa($koneksi));
-    require_once __DIR__ . '/../config/fpm_reschedule_helper.php';
-    $rescheduleQaBadgeCount = hitungRescheduleBelumDibaca($koneksi, true);
-}
+// Badge Verifikasi Countermeasure kini masuk badge menu "Tugas & Approval".
 ?>
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
 
@@ -46,17 +36,12 @@ if (isset($koneksi) && (($_SESSION['dept'] ?? '') === 'QA')) {
                     $monitoringSpBadgeCount = hitungSpMonitoringApproval($koneksi);
                 }
                 ?>
-                <li class="nav-item">
-                    <a href="monitoring_approval.php?modul=qa" class="nav-link">
-                        <i class="nav-icon bi bi-diagram-3-fill"></i>
-                        <p>
-                            Monitor Approval
-                            <?php if ($monitoringSpBadgeCount > 0): ?>
-                                <span class="badge bg-danger ms-1" title="Jumlah FPM yang sudah kena SP (Surat Peringatan)"><?= $monitoringSpBadgeCount ?></span>
-                            <?php endif; ?>
-                        </p>
-                    </a>
-                </li>
+                <?php
+                // Satu menu "Tugas & Approval" (Tugas Saya + Monitor Approval sebagai tab). Blok di atas
+                // tetap dipanggil karena sekaligus mencatat pelanggaran SP.
+                require_once __DIR__ . '/../config/tugas_saya_helper.php';
+                renderMenuTugasSaya($koneksi ?? null, true);
+                ?>
 
                 <li class="nav-item">
                     <a href="../cetak_sasaran_mutu.php?kategori=claim_machining" class="nav-link">
@@ -68,23 +53,7 @@ if (isset($koneksi) && (($_SESSION['dept'] ?? '') === 'QA')) {
                 </li>
 
                 <?php if (($_SESSION['dept'] ?? '') === 'QA'): ?>
-                <li class="nav-item">
-                    <a href="verifikasi_countermeasure.php" class="nav-link">
-                        <i class="nav-icon bi bi-patch-check-fill"></i>
-                        <p>
-                            Verifikasi Countermeasure
-                            <?php if ($verifikasiQaBadgeCount > 0): ?>
-                                <span class="badge bg-danger ms-2"><?= $verifikasiQaBadgeCount ?></span>
-                            <?php endif; ?>
-                            <?php if ($revisiDiperbaikiQaBadgeCount > 0): ?>
-                                <span class="badge bg-primary ms-1" title="Revisi sudah diperbaiki PIC, perlu dicek"><i class="bi bi-arrow-counterclockwise"></i> <?= $revisiDiperbaikiQaBadgeCount ?></span>
-                            <?php endif; ?>
-                            <?php if ($rescheduleQaBadgeCount > 0): ?>
-                                <span class="badge bg-warning text-dark ms-1" title="Countermeasure di-reschedule, belum dibaca"><i class="bi bi-calendar-event"></i> <?= $rescheduleQaBadgeCount ?></span>
-                            <?php endif; ?>
-                        </p>
-                    </a>
-                </li>
+                <?php // Verifikasi Countermeasure kini ada di menu "Tugas & Approval" › Tugas Saya. ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-file-earmark-check-fill"></i>

@@ -1,16 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/branding_helper.php';
-$verifikasiBadgeCount = 0;
-$revisiDiperbaikiBadgeCount = 0;
-if (isset($koneksi) && isset($_SESSION['username'])) {
-    require_once __DIR__ . '/../config/verifikasi_countermeasure_helper.php';
-    $verifikasiPlant = resolveVerifikasiPlant($_SESSION['username'], null);
-    $verifikasiBadgeCount = countPendingCountermeasureVerifikasi($koneksi, $verifikasiPlant)['total'];
-    require_once __DIR__ . '/../config/countermeasure_revisi_helper.php';
-    $revisiDiperbaikiBadgeCount = count(ambilRevisiPerluDicekImp($koneksi, $verifikasiPlant));
-    // Reschedule due date dari Staff / Dept Head tidak perlu diverifikasi Staff IMP,
-    // jadi tidak ikut dihitung di badge menu ini.
-}
+// Verifikasi Countermeasure kini tab di menu "Tugas & Approval" (badge-nya ada di tab itu).
 ?>
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
 
@@ -44,17 +34,12 @@ if (isset($koneksi) && isset($_SESSION['username'])) {
                     $monitoringSpBadgeCount = hitungSpMonitoringApproval($koneksi);
                 }
                 ?>
-                <li class="nav-item">
-                    <a href="monitoring_approval.php" class="nav-link">
-                        <i class="nav-icon bi bi-diagram-3-fill"></i>
-                        <p>
-                            Monitor Approval
-                            <?php if ($monitoringSpBadgeCount > 0): ?>
-                                <span class="badge bg-danger ms-1" title="Jumlah FPM yang sudah kena SP (Surat Peringatan)"><?= $monitoringSpBadgeCount ?></span>
-                            <?php endif; ?>
-                        </p>
-                    </a>
-                </li>
+                <?php
+                // Satu menu "Tugas & Approval" (Tugas Saya + Monitor Approval sebagai tab). Blok di atas
+                // tetap dipanggil karena sekaligus mencatat pelanggaran SP.
+                require_once __DIR__ . '/../config/tugas_saya_helper.php';
+                renderMenuTugasSaya($koneksi ?? null, false);
+                ?>
                 <?php
                 // Problem Asakai yang perlu dibuatkan FPM & belum dibuat (lihat config/asakai_fpm_helper.php).
                 $asakaiFpmBadge = ['jumlah' => 0];
@@ -87,20 +72,6 @@ if (isset($koneksi) && isset($_SESSION['username'])) {
                         <i class="nav-icon bi bi-printer-fill"></i>
                         <p>
                             Sasaran Mutu
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="verifikasi_countermeasure.php" class="nav-link">
-                        <i class="nav-icon bi bi-patch-check-fill"></i>
-                        <p>
-                            Verifikasi Countermeasure
-                            <?php if ($verifikasiBadgeCount > 0): ?>
-                                <span class="badge bg-danger ms-2"><?= $verifikasiBadgeCount ?></span>
-                            <?php endif; ?>
-                            <?php if ($revisiDiperbaikiBadgeCount > 0): ?>
-                                <span class="badge bg-primary ms-1" title="Revisi sudah diperbaiki PIC, perlu dicek"><i class="bi bi-arrow-counterclockwise"></i> <?= $revisiDiperbaikiBadgeCount ?></span>
-                            <?php endif; ?>
                         </p>
                     </a>
                 </li>

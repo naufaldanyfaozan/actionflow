@@ -33,17 +33,12 @@
                     $monitoringSpBadgeCount = hitungSpMonitoringApproval($koneksi);
                 }
                 ?>
-                <li class="nav-item">
-                    <a href="monitoring_approval.php" class="nav-link">
-                        <i class="nav-icon bi bi-diagram-3-fill"></i>
-                        <p>
-                            Monitor Approval
-                            <?php if ($monitoringSpBadgeCount > 0): ?>
-                                <span class="badge bg-danger ms-1" title="Jumlah FPM yang sudah kena SP (Surat Peringatan)"><?= $monitoringSpBadgeCount ?></span>
-                            <?php endif; ?>
-                        </p>
-                    </a>
-                </li>
+                <?php
+                // Satu menu "Tugas & Approval" (Tugas Saya + Monitor Approval sebagai tab). Blok di atas
+                // tetap dipanggil karena sekaligus mencatat pelanggaran SP.
+                require_once __DIR__ . '/../config/tugas_saya_helper.php';
+                renderMenuTugasSaya($koneksi ?? null, false);
+                ?>
 
                 <li class="nav-item">
                     <a href="rekap_perbaikan.php" class="nav-link">

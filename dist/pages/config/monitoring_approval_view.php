@@ -293,6 +293,12 @@ $urlFilter = function (array $ubah) {
     }
 </style>
 
+<?php
+// Satu menu dengan Tugas Saya di sidebar - pindah lewat tab.
+require_once __DIR__ . '/tugas_saya_helper.php';
+renderTabTugasApproval($koneksi, 'monitor');
+?>
+
 <div class="container-fluid dashboard-wrapper">
 
     <div class="dashboard-title">
