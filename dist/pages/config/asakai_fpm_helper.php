@@ -511,7 +511,7 @@ function renderPengingatAsakaiFpm(mysqli $koneksi, string $plant = '', string $h
     <div class="alert alert-<?= $warna ?>" style="font-size:14px">
         <div class="fw-semibold mb-1"><i class="bi bi-exclamation-triangle-fill"></i>
             <?= count($tugas) ?> FPM dari pembahasan Asakai belum dibuat
-            <a href="fpm_asakai.php" class="ms-2 fw-normal small">Lihat menu FPM dari Asakai &rsaquo;</a>
+            <a href="tugas_saya.php#asakai-fpm" class="ms-2 fw-normal small">Lihat di Tugas &amp; Approval &rsaquo;</a>
         </div>
         <div class="small mb-2">Buat FPM-nya paling lambat <?= appSettingInt('monitor_asakai_fpm_sp') - 1 ?> hari kerja setelah ditandai di pembahasan Asakai. Lewat dari itu tercatat <b>SP</b> untuk Staff IMP.</div>
         <ul class="mb-0 ps-3">

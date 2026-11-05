@@ -74,8 +74,32 @@ function handlePermintaanRevisiPost($koneksi, string $peminta = CM_REVISI_ROLE_I
         );
     }
 
-    echo "<script>alert(" . json_encode($hasil['pesan']) . "); window.location='" . cmRevisiHalamanPic($peminta) . "';</script>";
+    echo "<script>alert(" . json_encode($hasil['pesan']) . "); window.location=" . json_encode(permintaanRevisiUrlTugasSaya($peminta)) . ";</script>";
     exit;
+}
+
+/**
+ * Permintaan Revisi kini tampil di menu "Tugas & Approval" › Tugas Saya (lihat
+ * tugas_saya_view.php) - alamat bagiannya di sana, per peminta.
+ */
+function permintaanRevisiUrlTugasSaya(string $peminta, array $query = []): string
+{
+    if ($peminta === CM_REVISI_ROLE_QA) {
+        $query = ['modul' => 'qa'] + $query;
+    }
+    return 'tugas_saya.php' . ($query ? '?' . http_build_query($query) : '') . '#' . permintaanRevisiAnchor($peminta);
+}
+
+function permintaanRevisiAnchor(string $peminta): string
+{
+    return $peminta === CM_REVISI_ROLE_QA ? 'revisi-qa' : 'revisi-imp';
+}
+
+// Parameter GET tab (Perlu Diperbaiki / Sudah Ditindaklanjuti) per peminta - Dept Head bisa
+// punya dua bagian (IMP & QA) di halaman Tugas Saya yang sama.
+function permintaanRevisiParamTab(string $peminta): string
+{
+    return $peminta === CM_REVISI_ROLE_QA ? 'revisi_qa_tab' : 'revisi_tab';
 }
 
 function permintaanRevisiLinkDetail(array $r): string
@@ -97,8 +121,18 @@ function renderPermintaanRevisiContent($koneksi, string $peminta = CM_REVISI_ROL
     $menunggu = array_values(array_filter($semua, fn($r) => $r['status_revisi'] === 'MENUNGGU'));
     $riwayat = array_values(array_filter($semua, fn($r) => $r['status_revisi'] !== 'MENUNGGU'));
 
-    $tab = ($_GET['tab'] ?? '') === 'riwayat' ? 'riwayat' : 'menunggu';
+    $paramTab = permintaanRevisiParamTab($peminta);
+    $tab = ($_GET[$paramTab] ?? '') === 'riwayat' ? 'riwayat' : 'menunggu';
     $list = $tab === 'riwayat' ? $riwayat : $menunggu;
+    // Link tab tetap di halaman Tugas Saya (parameter GET lain, mis. modul=qa, dipertahankan).
+    $urlTab = function (string $nilai) use ($paramTab, $peminta) {
+        $q = $_GET;
+        unset($q[$paramTab]);
+        if ($nilai !== 'menunggu') {
+            $q[$paramTab] = $nilai;
+        }
+        return '?' . http_build_query($q) . '#' . permintaanRevisiAnchor($peminta);
+    };
     ?>
     <style>
         .pr-wrap { max-width: 1100px; margin: 20px auto; padding: 0 16px; font-family: 'Inter', 'Segoe UI', sans-serif; }
@@ -136,7 +170,7 @@ function renderPermintaanRevisiContent($koneksi, string $peminta = CM_REVISI_ROL
         }
     </style>
 
-    <div class="pr-wrap">
+    <div class="pr-wrap" id="<?= permintaanRevisiAnchor($peminta) ?>">
         <h2 class="pr-title"><i class="bi bi-arrow-counterclockwise"></i> Permintaan Revisi dari <?= htmlspecialchars($peminta) ?></h2>
         <p class="pr-sub">
             Countermeasure dept <b><?= htmlspecialchars($dept ?: '-') ?></b> yang perlu diperbaiki - mis. salah upload foto.
@@ -144,10 +178,10 @@ function renderPermintaanRevisiContent($koneksi, string $peminta = CM_REVISI_ROL
         </p>
 
         <div class="pr-tabs">
-            <a href="<?= $halaman ?>" class="pr-tab <?= $tab === 'menunggu' ? 'active' : '' ?>">
+            <a href="<?= htmlspecialchars($urlTab('menunggu')) ?>" class="pr-tab <?= $tab === 'menunggu' ? 'active' : '' ?>">
                 Perlu Diperbaiki<?php if (count($menunggu) > 0): ?><span class="cnt"><?= count($menunggu) ?></span><?php endif; ?>
             </a>
-            <a href="<?= $halaman ?>?tab=riwayat" class="pr-tab <?= $tab === 'riwayat' ? 'active' : '' ?>">
+            <a href="<?= htmlspecialchars($urlTab('riwayat')) ?>" class="pr-tab <?= $tab === 'riwayat' ? 'active' : '' ?>">
                 Sudah Ditindaklanjuti (<?= count($riwayat) ?>)
             </a>
         </div>
@@ -221,7 +255,7 @@ function renderPermintaanRevisiContent($koneksi, string $peminta = CM_REVISI_ROL
                 <?php endif; ?>
 
                 <?php if ($r['status_revisi'] === 'MENUNGGU'): ?>
-                    <form method="POST" enctype="multipart/form-data" class="pr-form" id="<?= $formId ?>"
+                    <form method="POST" action="<?= $halaman ?>" enctype="multipart/form-data" class="pr-form" id="<?= $formId ?>"
                         onsubmit="return cekFormRevisi(this, <?= $punyaBaris ? 'true' : 'false' ?>);">
                         <input type="hidden" name="sumber" value="<?= $r['sumber'] ?>">
                         <input type="hidden" name="id_revisi" value="<?= (int) $r['id'] ?>">

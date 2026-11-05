@@ -13,19 +13,26 @@ $modulQa   = ($_GET['modul'] ?? '') === 'qa';
 $dataTugas = ambilTugasSaya($koneksi, $_SESSION);
 $konteks   = $dataTugas['konteks'];
 
-// Staff IMP & Staff QA: verifikasi countermeasure ditampilkan sebagai daftar detail
-// (verifikasi_imp_view.php / verifikasi_qa_view.php), bukan baris ringkasan - grup lain
-// tetap tabel Tugas Saya biasa.
-$grupVerifDetail = [];
+// Halaman yang dulu menu sendiri kini tampil lengkap di bawah tabel Tugas Saya (supaya tidak
+// ada menu yang isinya dobel): grup => anchor bagiannya. Grup ini tidak lagi ditampilkan
+// sebagai tabel ringkasan.
+//  - Verifikasi Countermeasure (Staff IMP / Staff QA)  -> verifikasi_imp_view / verifikasi_qa_view
+//  - FPM dari Asakai (Staff IMP)                        -> asakai_fpm_view.php
+//  - Permintaan Revisi (Staff / Dept Head)              -> permintaan_revisi_view.php
+$seksiTanam = [];
 $viewVerifDetail = null;
 if ($konteks['level'] === 'Staff IMP') {
-    $grupVerifDetail = ['verifikasi', 'revisi_cek'];
+    $seksiTanam = ['verifikasi' => 'verifikasi', 'revisi_cek' => 'verifikasi', 'asakai_fpm' => 'asakai-fpm'];
     $viewVerifDetail = __DIR__ . '/verifikasi_imp_view.php';
 } elseif ($konteks['staff_qa']) {
-    $grupVerifDetail = ['verifikasi', 'revisi_cek', 'reschedule'];
+    $seksiTanam = ['verifikasi' => 'verifikasi', 'revisi_cek' => 'verifikasi', 'reschedule' => 'verifikasi'];
     $viewVerifDetail = __DIR__ . '/verifikasi_qa_view.php';
 }
-$grupBiasa = array_diff_key($dataTugas['grup'], array_flip($grupVerifDetail));
+$tanamRevisi = in_array($konteks['level'], ['Staff', 'Dept Head'], true) && $konteks['dept'] !== '';
+if ($tanamRevisi) {
+    $seksiTanam['revisi'] = 'revisi';
+}
+$grupBiasa = array_diff_key($dataTugas['grup'], $seksiTanam);
 
 // SP (Surat Peringatan) yang masih berlaku untuk pihak user ini.
 $spSaya = null;
@@ -229,7 +236,7 @@ $peran = trim($konteks['level'] . ($konteks['dept'] !== '' ? ' ' . $konteks['dep
                         $jml = array_sum(array_column($daftar, 'jumlah'));
                         $adaSp = in_array('sp', array_column($daftar, 'status'), true);
                     ?>
-                        <a href="<?= in_array($kode, $grupVerifDetail, true) ? '#verifikasi' : '#grup-' . $kode ?>" class="<?= $adaSp ? 'ada-sp' : '' ?>">
+                        <a href="#<?= $seksiTanam[$kode] ?? 'grup-' . $kode ?>" class="<?= $adaSp ? 'ada-sp' : '' ?>">
                             <i class="bi <?= TUGAS_SAYA_GRUP[$kode]['ikon'] ?> ikon"></i>
                             <div>
                                 <div class="angka"><?= $jml ?></div>
@@ -300,13 +307,71 @@ $peran = trim($konteks['level'] . ($konteks['dept'] !== '' ? ' ' . $konteks['dep
                 </div>
             <?php endforeach; ?>
 
-            <?php
-            // Staff IMP / Staff QA: daftar verifikasi lengkap (sebelumnya menu Verifikasi Countermeasure).
-            if ($viewVerifDetail && array_intersect_key($dataTugas['grup'], array_flip($grupVerifDetail))) {
-                require $viewVerifDetail;
-            }
-            ?>
+        <?php endif; ?>
 
+        <?php
+        // ---- Bagian lengkap yang dulu menu sendiri (lihat $seksiTanam di atas) ----
+        // Tampil penuh kalau ada yang menunggu / riwayatnya dibuka; kalau tidak, cukup link
+        // riwayat di kotak "Riwayat" paling bawah.
+        $linkRiwayat = [];
+
+        if ($tanamRevisi) {
+            require_once __DIR__ . '/permintaan_revisi_view.php';
+            $daftarPeminta = $konteks['level'] === 'Dept Head' ? [CM_REVISI_ROLE_IMP, CM_REVISI_ROLE_QA] : [CM_REVISI_ROLE_IMP];
+            echo '<div id="revisi">';
+            foreach ($daftarPeminta as $peminta) {
+                $semuaRevisi = ambilPermintaanRevisiDept($koneksi, $konteks['dept'], $peminta);
+                $jmlMenunggu = count(array_filter($semuaRevisi, fn($r) => $r['status_revisi'] === 'MENUNGGU'));
+                $paramTab = permintaanRevisiParamTab($peminta);
+                if ($jmlMenunggu > 0 || ($_GET[$paramTab] ?? '') === 'riwayat') {
+                    renderPermintaanRevisiContent($koneksi, $peminta);
+                } elseif (count($semuaRevisi) > $jmlMenunggu) {
+                    $linkRiwayat[] = [
+                        'label'  => 'Permintaan revisi dari ' . $peminta . ' (sudah ditindaklanjuti)',
+                        'jumlah' => count($semuaRevisi) - $jmlMenunggu,
+                        'url'    => '?' . http_build_query(array_merge($_GET, [$paramTab => 'riwayat'])) . '#' . permintaanRevisiAnchor($peminta),
+                    ];
+                }
+            }
+            echo '</div>';
+        }
+
+        if ($konteks['level'] === 'Staff IMP') {
+            if (!empty($dataTugas['grup']['asakai_fpm']) || isset($_GET['status'])) {
+                echo '<div id="asakai-fpm">';
+                // Scope sendiri supaya variabel view tidak bentrok dengan halaman ini.
+                (function () use ($koneksi) {
+                    $asakaiFpmBisaBuat = true;
+                    $halamanAsakai = 'form_pembahasan_asakai.php';
+                    $halamanFpm = ['DOWN_TIME' => 'form_fpm.php', 'NG' => 'form_fpm_internal.php'];
+                    $asakaiFpmAnchor = '#asakai-fpm';
+                    require __DIR__ . '/asakai_fpm_view.php';
+                })();
+                echo '</div>';
+            } else {
+                $linkRiwayat[] = ['label' => 'FPM dari Asakai (sudah dibuat / dibatalkan)', 'jumlah' => null, 'url' => '?status=semua#asakai-fpm'];
+            }
+        }
+
+        // Staff IMP / Staff QA: daftar verifikasi lengkap (sebelumnya menu Verifikasi Countermeasure).
+        if ($viewVerifDetail && array_intersect_key($dataTugas['grup'], ['verifikasi' => 1, 'revisi_cek' => 1, 'reschedule' => 1])) {
+            require $viewVerifDetail;
+        }
+        ?>
+
+        <?php if ($linkRiwayat): ?>
+            <div class="card mb-3">
+                <div class="card-body py-2 small">
+                    <i class="bi bi-clock-history"></i> <strong>Riwayat:</strong>
+                    <?php foreach ($linkRiwayat as $i => $lr): ?>
+                        <?= $i > 0 ? ' · ' : '' ?>
+                        <a href="<?= htmlspecialchars($lr['url']) ?>"><?= htmlspecialchars($lr['label']) ?></a><?= $lr['jumlah'] !== null ? ' (' . (int) $lr['jumlah'] . ')' : '' ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($dataTugas['total'] > 0): ?>
             <div class="small text-muted mb-4">
                 H+ dihitung hari kerja (Sabtu & Minggu tidak dihitung), batas SP sama dengan tab
                 <a href="monitoring_approval.php<?= $modulQa ? '?modul=qa' : '' ?>">Monitor Approval</a>.

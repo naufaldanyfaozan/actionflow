@@ -11,6 +11,7 @@
  * @var bool   $asakaiFpmBisaBuat  true = tampilkan tombol "Buat FPM" (Staff IMP).
  * @var string $halamanAsakai      Halaman detail Asakai role ini (?id=id_asakai).
  * @var array  $halamanFpm         jenis (DOWN_TIME / NG) => halaman detail FPM role ini (?id=id_fpm).
+ * @var string $asakaiFpmAnchor    (opsional) anchor link tab, mis. '#asakai-fpm' di Tugas Saya Staff IMP.
  */
 
 require_once __DIR__ . '/asakai_fpm_helper.php';
@@ -40,8 +41,10 @@ if ($filter === 'belum') {
 }
 
 $batasSp = appSettingInt('monitor_asakai_fpm_sp');
-$tab = function (string $kode, string $label, int $n) use ($filter) {
-    return '<a href="?status=' . $kode . '" class="btn btn-sm ' . ($filter === $kode ? 'btn-primary' : 'btn-outline-secondary') . '">'
+// Staff IMP: view ini tampil di dalam Tugas Saya - link tab kembali ke bagiannya (#asakai-fpm).
+$asakaiFpmAnchor = $asakaiFpmAnchor ?? '';
+$tab = function (string $kode, string $label, int $n) use ($filter, $asakaiFpmAnchor) {
+    return '<a href="?status=' . $kode . $asakaiFpmAnchor . '" class="btn btn-sm ' . ($filter === $kode ? 'btn-primary' : 'btn-outline-secondary') . '">'
         . $label . ' <span class="badge ' . ($filter === $kode ? 'bg-light text-dark' : 'bg-secondary') . '">' . $n . '</span></a>';
 };
 ?>

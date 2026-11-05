@@ -1,10 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/branding_helper.php';
-$revisiQaBadgeCount = 0;
-if (isset($koneksi) && !empty($_SESSION['dept'])) {
-    require_once __DIR__ . '/../config/countermeasure_revisi_helper.php';
-    $revisiQaBadgeCount = hitungPermintaanRevisiMenunggu($koneksi, $_SESSION['dept'], CM_REVISI_ROLE_QA);
-}
+// Permintaan Revisi QA kini di menu "Tugas & Approval" (badge-nya ikut di sana).
 ?>
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
 
@@ -52,18 +48,6 @@ if (isset($koneksi) && !empty($_SESSION['dept'])) {
                         <i class="nav-icon bi bi-printer-fill"></i>
                         <p>
                             Sasaran Mutu
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="permintaan_revisi_qa.php" class="nav-link">
-                        <i class="nav-icon bi bi-arrow-counterclockwise"></i>
-                        <p>
-                            Permintaan Revisi
-                            <?php if ($revisiQaBadgeCount > 0): ?>
-                                <span class="badge bg-danger ms-2"><?= $revisiQaBadgeCount ?></span>
-                            <?php endif; ?>
                         </p>
                     </a>
                 </li>

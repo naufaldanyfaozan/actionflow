@@ -40,25 +40,7 @@ require_once __DIR__ . '/../config/branding_helper.php';
                 require_once __DIR__ . '/../config/tugas_saya_helper.php';
                 renderMenuTugasSaya($koneksi ?? null, false);
                 ?>
-                <?php
-                // Problem Asakai yang perlu dibuatkan FPM & belum dibuat (lihat config/asakai_fpm_helper.php).
-                $asakaiFpmBadge = ['jumlah' => 0];
-                if (isset($koneksi) && $koneksi instanceof mysqli) {
-                    require_once __DIR__ . '/../config/asakai_fpm_helper.php';
-                    $asakaiFpmBadge = badgeAsakaiFpm($koneksi, (string) ($_SESSION['plant'] ?? ''));
-                }
-                ?>
-                <li class="nav-item">
-                    <a href="fpm_asakai.php" class="nav-link">
-                        <i class="nav-icon bi bi-journal-plus"></i>
-                        <p>
-                            FPM dari Asakai
-                            <?php if ($asakaiFpmBadge['jumlah'] > 0): ?>
-                                <span class="badge <?= $asakaiFpmBadge['warna'] ?> ms-1" title="FPM dari pembahasan Asakai yang belum dibuat"><?= $asakaiFpmBadge['jumlah'] ?></span>
-                            <?php endif; ?>
-                        </p>
-                    </a>
-                </li>
+                <?php // FPM dari Asakai kini di menu "Tugas & Approval" › Tugas Saya. ?>
                 <li class="nav-item">
                     <a href="rekap_perbaikan.php" class="nav-link">
                         <i class="nav-icon bi bi-calendar-week-fill"></i>
